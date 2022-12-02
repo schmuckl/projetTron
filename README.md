@@ -11,6 +11,8 @@ Ouvrir une invite de commande et lancer les commandes suivantes :
     - cordova platform add android
     - npm install websocket
 
+Initialisation BDD :
+Après avoir installé MongoDB, on peut lancer la BDD via la commande (sous WebDev) "mongod --dbpath="[path to project files]/BDD";
 
 Pour lancer le serveur et l'application :
 Toujours dans le même dossier, lancer la commande "node www/js/ServerWS";
