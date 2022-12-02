@@ -43,14 +43,16 @@
             <button onclick="ws.meConnecter()">Me connecter</button>
         </div>
 
-        <button type="submit" onclick="hrefFunction()">
-            to snake
-        </button>
+        <button type="submit" onclick="toSnake()">to snake</button>
+        <button type="submit" onclick="toTron()">to tron</button>
         <script>
             
             //Function demonstrating the Href Method
             
-            function hrefFunction(){
+            function toSnake() {
+                window.location.href = "/snake.html";
+            }
+            function toTron() {
                 window.location.href = "/tron.html";
             }
 
