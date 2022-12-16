@@ -25,7 +25,7 @@ wsServer.on('request', function(request) {
     }
     connection.on('message', function(message) {
         console.log("Serveur je reçois : "+message.utf8Data);
-        connection.send(msg);
+        connection.send(msg + " - nbJoueurs : " + nbjoueurs);
         
     });
 
