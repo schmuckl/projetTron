@@ -13,6 +13,8 @@ Ouvrir une invite de commande et lancer les commandes suivantes :
 
 Initialisation BDD :
 Après avoir installé MongoDB, on peut lancer la BDD via la commande (sous WebDev) "mongod --dbpath="[path to project files]/BDD";
+- Créer une BDD projetTron
+- Installer mongoose
 
 Pour lancer le serveur et l'application :
 Toujours dans le même dossier, lancer la commande "node www/js/ServerWS";

@@ -1,5 +1,6 @@
 // Permet de créer une websocket qui va envoyer toutes les requêtes à cette url et ce port (que le serveur écoute)
-const ws = new WebSocket('ws://130.190.75.86:9898/');
+const ws = new WebSocket('ws://localhost:9898/');
+// const ws = new WebSocket('ws://130.190.75.86:9898/');
 
 // Quand la websocket reçoit un message de la part du serveur
 ws.onmessage = function(e) {
