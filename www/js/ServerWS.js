@@ -1,9 +1,11 @@
-const bdd = require('../../BDD/gestionBdd/initDataBdd.js')
+const bdd = require('./gestionBdd/initDataBdd.js')
 const http = require('http');
 const server = http.createServer();
 server.listen(9898);
 
 let nbjoueurs = 0;
+
+const p = require('./gestionBdd/Players.js');
 
 // Création du server WebSocket qui utilise le serveur précédent
 const WebSocketServer = require('websocket').server;
@@ -14,10 +16,10 @@ httpServer: server
 let sockets = [];
 wsServer.on('request', function(request) {
     const connection = request.accept(null, request.origin);
-    // Ecrire ici le code qui indique ce que l'on fait en cas de
-// réception de message et en cas de fermeture de la WebSocket
+    // Ecrire ici le code qui indique ce que l'on fait en cas de réception de message et en cas de fermeture de la WebSocket
     sockets.push(connection);
     nbjoueurs++;
+    nbjoueurs = 2;
     let msg = "";
     if (nbjoueurs < 2) {
         msg = "Dans l'attente d'un second joueur pour lancer la partie.";

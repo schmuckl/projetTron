@@ -7,9 +7,10 @@ ws.onmessage = function(e) {
 
     console.log(e);
 
-    // if (e.type == "") {
-    //     window.location.href = "/tron.html";
-    // }
+    
+    if (e.data == "Il y a 2 joueurs, on peut lancer la partie. - nbJoueurs : 2") {
+        window.location.href = "/tron.html";
+    }
 
 
     let reponseJSON  = JSON.parse(e.data); // on prend le message qui est un string et vu que nous avons envoyé un objet json nous utilisons la méthode parse pour qu'il passe de string --> objet js
