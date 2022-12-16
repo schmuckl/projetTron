@@ -1,8 +1,15 @@
 // Permet de créer une websocket qui va envoyer toutes les requêtes à cette url et ce port (que le serveur écoute)
-const ws = new WebSocket('ws://localhost:9898/');
+const ws = new WebSocket('ws://130.190.75.86:9898/');
 
 // Quand la websocket reçoit un message de la part du serveur
 ws.onmessage = function(e) {
+
+    console.log(e);
+
+    if (e.type == "message") {
+        window.location.href = "/tron.html";
+    }
+
 
     let reponseJSON  = JSON.parse(e.data); // on prend le message qui est un string et vu que nous avons envoyé un objet json nous utilisons la méthode parse pour qu'il passe de string --> objet js
     //Nous regardons quel message nous recvons car nous pouvons avoir plusieurs types 

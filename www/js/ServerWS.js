@@ -1,6 +1,8 @@
 const http = require('http');
 const server = http.createServer();
-server.listen(9898); 
+server.listen(9898);
+
+let nbjoueurs = 0;
 
 // Création du server WebSocket qui utilise le serveur précédent
 const WebSocketServer = require('websocket').server;
@@ -14,10 +16,17 @@ wsServer.on('request', function(request) {
     // Ecrire ici le code qui indique ce que l'on fait en cas de
 // réception de message et en cas de fermeture de la WebSocket
     sockets.push(connection);
-
+    nbjoueurs++;
+    let msg = "";
+    if (nbjoueurs < 2) {
+        msg = "Dans l'attente d'un second joueur pour lancer la partie.";
+    } else {
+        msg = "Il y a 2 joueurs, on peut lancer la partie.";
+    }
     connection.on('message', function(message) {
         console.log("Serveur je reçois : "+message.utf8Data);
-        connection.send("J'ai bien reçu au niveau du serveur !");
+        connection.send(msg);
+        
     });
 
     connection.on('close', function(reasonCode, description) {
