@@ -19,7 +19,7 @@ wsServer.on('request', function(request) {
     // Ecrire ici le code qui indique ce que l'on fait en cas de réception de message et en cas de fermeture de la WebSocket
     sockets.push(connection);
     nbjoueurs++;
-    nbjoueurs = 2;
+    //nbjoueurs = 2;
     let msg = "";
     if (nbjoueurs < 2) {
         msg = "Dans l'attente d'un second joueur pour lancer la partie.";

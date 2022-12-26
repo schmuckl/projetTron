@@ -13,7 +13,7 @@ httpServer: server
 
 let sockets = [];
 // Pour chaque requête qu'on reçoit (pour chaque client - chaque websocket créée
-)
+
 wsServer.on('request', function(request) {
     // On accepte toutes les websockets. 
     const connection = request.accept(null, request.origin);
