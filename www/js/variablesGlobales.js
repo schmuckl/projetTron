@@ -6,10 +6,15 @@ let tailleGrille = 30;
 let nbjoueurs;
 
 let position_joueur_depart_1 = {
-    x : 1,
+    x : 3,
     y : 14
 }
 let position_joueur_depart_2 = {
-    x : 28,
+    x : 26,
+    y : 14
+}
+
+let position_joueur = {
+    x : 26,
     y : 14
 }

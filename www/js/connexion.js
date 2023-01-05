@@ -10,6 +10,8 @@ ws.onmessage = function(e) {
     
     if (e.data == "Il y a 2 joueurs, on peut lancer la partie. - nbJoueurs : 2") {
         window.location.href = "/tron.html";
+    }else{
+        console.log("wait")
     }
 
 
