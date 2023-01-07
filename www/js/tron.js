@@ -7,7 +7,7 @@ function init() {
     // position_joueur_2 = position_joueur_depart_2;
     // addNewPosition(cases[position_joueur.x][position_joueur.y]);
     createGrille();
-    setPositionMur();
+    setPositionsMur();
     setPositionsDepart();
     ecouterJoueur();
 }
@@ -28,7 +28,7 @@ function createGrille() {
             valeurCase++;
         }
     }
-    grille.cases = cases;
+    grille.setCases(cases);
     return;
 }
 
@@ -47,99 +47,91 @@ function setPositionsDepart() {
     console.log(grille.cases);
 }
 
-function setPositionMur(){
+// Ajoute les murs sur les bords de la grille
+function setPositionsMur() {
 
-    for(let i =0 ;i<=870;i+=30){
+    cases = grille.getCases();
+    let nbCasesTotal = tailleGrille * tailleGrille;
+
+    for(let i = 0; i < tailleGrille; i++) {
+        cases[i].isWall = true;
         document.getElementById(i).classList.add("MurPosition");
     }
-    for(let i =29 ;i<=899;i+=30){
+    for(let i = 0 ; i <= nbCasesTotal - tailleGrille - 1; i+=tailleGrille) {
+        cases[i].isWall = true;
         document.getElementById(i).classList.add("MurPosition");
     }
-    for(let i =1 ;i<29;i++){
+    for(let i = tailleGrille - 1; i <= nbCasesTotal - 1; i+=tailleGrille){
+        cases[i].isWall = true;
         document.getElementById(i).classList.add("MurPosition");
     }
-    for(let i =871 ;i<899;i++){
+    for(let i = nbCasesTotal - tailleGrille - 1; i < nbCasesTotal; i++){
+        cases[i].isWall = true;
         document.getElementById(i).classList.add("MurPosition");
     }
 
-   
+    grille.setCases(cases);
+    console.log(grille);
 }
 
 function addNewPosition(la_case) {
-    document.getElementById(la_case).classList.add("currentPosition");
-}
-
-// entrz le coordonner et return sa valuer de case
-function getValeur(x,y){
-    let a=0
-    grille.cases.forEach(case_ => {
-        if(case_.pos_x == x && case_.pos_y == y) {
-            a = case_.val;
-        }
-    });
-    return a;
+    document.getElementById(la_case.val).classList.add("currentPosition");
 }
 
 // init un interval pour mouvement automatique 
-let myVar = 0
+let interval = 0;
 // clean un interval
 function stopInterval() {
-    clearInterval(myVar);
+    clearInterval(interval);
 }
 
 // Fonction permettant la prise en compte des actions du joueur (flèches directionnelles)
 function mouvement(event) {
-    let a = 0
-    let b = 0
     event.preventDefault();
     switch (event.keyCode) {
         case 83:
-            stopInterval()
-            myVar =  setInterval(function(){
-                console.log("down")
-                a = getValeur(position_joueur.x,position_joueur.y)
-                setCaseVisitee(a);
+            stopInterval();
+            interval = setInterval(function() {
+                console.log("down");
+                case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                setCaseVisitee(case_);
                 position_joueur.y++;
-                b = getValeur(position_joueur.x,position_joueur.y)
-                addNewPosition(b);
-                gameOver(b);
-            },200)
+                new_case = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                if (!gameOver(new_case)) addNewPosition(new_case);
+            }, 200);
             break;
         case 90:
-            stopInterval()
-            myVar = setInterval(function(){
-                console.log("up")
-                a = getValeur(position_joueur.x,position_joueur.y)
-                setCaseVisitee(a);
+            stopInterval();
+            interval = setInterval(function() {
+                console.log("up");
+                case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                setCaseVisitee(case_);
                 position_joueur.y--;
-                b = getValeur(position_joueur.x,position_joueur.y)
-                addNewPosition(b);
-                gameOver(b);
-            },200)
+                new_case = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                if (!gameOver(new_case)) addNewPosition(new_case);
+            }, 200)
             break;
         case 81:
-            stopInterval()
-            myVar = setInterval(function(){
-                console.log("left")
-                a = getValeur(position_joueur.x,position_joueur.y)
-                setCaseVisitee(a);
+            stopInterval();
+            interval = setInterval(function() {
+                console.log("left");
+                case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                setCaseVisitee(case_);
                 position_joueur.x--;
-                b = getValeur(position_joueur.x,position_joueur.y)
-                addNewPosition(b);
-                gameOver(b);
-            },200)
+                new_case = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                if (!gameOver(new_case)) addNewPosition(new_case);
+            }, 200);
             break;
         case 68:
-            stopInterval()
-            myVar = setInterval(function(){
-                console.log("right")
-                a = getValeur(position_joueur.x,position_joueur.y)
-                setCaseVisitee(a);
+            stopInterval();
+            interval = setInterval(function() {
+                console.log("right");
+                case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                setCaseVisitee(case_);
                 position_joueur.x++;
-                b = getValeur(position_joueur.x,position_joueur.y)
-                addNewPosition(b);
-                gameOver(b);
-            },200)
+                new_case = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
+                if (!gameOver(new_case)) addNewPosition(new_case);
+            } ,200);
             break;
     }
 }
@@ -151,17 +143,19 @@ function ecouterJoueur() {
 
 // Permet de mettre la couleur "visitée" sur la case fournie en paramètre
 function setCaseVisitee(caseVisite) {
-   let td = document.getElementById(caseVisite);
+   let td = document.getElementById(caseVisite.val);
    td.classList.remove("currentPosition");
    td.classList.add("caseVisite"); 
    td.setAttribute("style", "background-color:orange");
+   grille.cases[caseVisite.val].isWall = true;
 }
 
 
-//si le case qui a le class currentPosition et caseVisite. il a predu
-function gameOver(caseHead){
-    let td = document.getElementById(caseHead);
-    if(td.classList.length>=2){
-        alert("lose")
+//si la nouvelle case est un mur, alors c'est perdu
+function gameOver(lacase) {
+    if (lacase.isWall) {
+        window.removeEventListener("keyup", mouvement);
+        alert("Fin");
+        stopInterval();
     }
 }
