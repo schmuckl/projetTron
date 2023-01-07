@@ -5,7 +5,7 @@ server.listen(9898);
 
 let nbjoueurs = 0;
 
-const p = require('./gestionBdd/Players.js');
+const p = require('./Joueurs/Joueur.js');
 
 // Création du server WebSocket qui utilise le serveur précédent
 const WebSocketServer = require('websocket').server;
