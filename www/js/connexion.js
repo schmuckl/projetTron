@@ -27,15 +27,24 @@ ws.onmessage = function(message) {
     messageJson = JSON.parse(message.data);
 
     console.log(messageJson);
-    
+
     let msg;
 
+    // Dans le cas où le client s'est connecté, on lance la file d'attente
     if (messageJson.type == "connexion" && messageJson.statut) {
+        let divFileDattente = document.getElementById("fileDattente");
+        divFileDattente.style.visibility = "visible";
+        
         msg = {
             type : "attenteDunePartie",
             pseudo : messageJson.pseudo
         }
         ws.send(JSON.stringify(msg));
+    }
+
+    if (messageJson.type = "lancementPartie") {
+        window.location.href = "../tron.html";
+        console.log(messageJson);
     }
 }
 

@@ -36,8 +36,8 @@ module.exports = {
             this.nbJoueurs--;
         }
 
-        isSallePleine(salle) {
-            return salle.nbJoueurs <= 2;
+        isSallePleine() {
+            return this.nbJoueurs <= 2;
         }
     }
 }

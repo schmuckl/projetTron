@@ -20,11 +20,10 @@ class SallesController {
 
     // Ajoute un joueur à une salle d'attente existante s'il y en a, sinon on créer une autre salle
     ajouterJoueurDansSalle(joueur) {
-        console.log("DANS AJOUTERJOUEURDANSSALLE");
         let joueurAjoute = false;
         let salle = null;
         this.salles.forEach(s => {
-            if (s.nbJoueurs < 2) {
+            if (s.isSallePleine()) {
                 s.ajouterJoueur(joueur);
                 joueurAjoute = true;
                 salle = s;

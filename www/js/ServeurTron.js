@@ -26,13 +26,11 @@ wsServer.on('request', function (request) {
     connexion.on('message', function (message) {
 
         message = JSON.parse(message.utf8Data);
-        let messageJson;
 
         // Gestion des salles "d'attente" et des salles où il faut lancer la partie, ainsi que de la connexion des joueurs
         if (message.type == "connexion") {
             // Dans le cas où le joueur n'existe pas, on va le créer
-            messageJson = connexionJoueurs(message);
-            connexion.send(JSON.stringify(messageJson));
+            connexionJoueurs(message, connexion);
         }
         if (message.type == "attenteDunePartie") {
             joueur = new Joueur(message.pseudo);
@@ -41,7 +39,6 @@ wsServer.on('request', function (request) {
         if (message.type == "lancementPartie") {
             lancementPartie(message);
         }
-
     });
 
     // Quand la websocket se ferme, l'utilisateur ferme son onglet ou navigateur ou par un timer qu'on a mis (pas notre cas ici)
@@ -58,7 +55,7 @@ wsServer.on('request', function (request) {
 });
 
 // Gère la connexion et la création d'un joueur
-function connexionJoueurs(message) {
+function connexionJoueurs(message, connexion) {
 
     // Message à renvoyer
     let messageJson = {
@@ -83,8 +80,7 @@ function connexionJoueurs(message) {
         messageJson.statut = true;
     }
     messageJson.pseudo = message.pseudo;
-    eventEmitter.emit("attenteDunePartie", messageJson);
-    return messageJson;
+    connexion.send(JSON.stringify(messageJson));
 }
 
 // Gère le lancement d'une file d'attente
@@ -92,19 +88,16 @@ function attenteDunePartie(joueur, connexion) {
     
     // On ajoute le joueur à la salle d'attente
     let salleDattente = SallesController.ajouterJoueurDansSalle(joueur);
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
     // Si la salle est pleine on lance la partie
-    if (salleDattente.isSallePleine()) {
-        let messageJson = {
-            type : "lancementPartie",
-            salle : {
-                id : salleDattente.id,
-                joueurs : salleDattente.getJoueurs()
-            }
+    let messageJson = {
+        type : "lancementPartie",
+        salle : {
+            id : salleDattente.id,
+            joueurs : salleDattente.getJoueurs()
         }
-        connexion.send(messageJson);
     }
+        connexion.send(messageJson);
 }
 
 function lancementPartie(message) {
