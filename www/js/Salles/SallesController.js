@@ -12,7 +12,8 @@ class SallesController {
 
     creerSalle(joueur) {
         let idSalle = this.getNbSalles() + 1;
-        let salle = new Salle(idSalle, joueur, 1);
+        let salle = new Salle(idSalle);
+        salle.ajouterJoueur(joueur);
         JoueursConnectesListe.ajouterJoueur(joueur);
         this.salles.push(salle);
         return salle;
@@ -22,8 +23,11 @@ class SallesController {
     ajouterJoueurDansSalle(joueur) {
         let joueurAjoute = false;
         let salle = null;
+
+        console.log("AjouterJoueurDansSalle()");
+
         this.salles.forEach(s => {
-            if (s.isSallePleine()) {
+            if (!s.isSallePleine()) {
                 s.ajouterJoueur(joueur);
                 joueurAjoute = true;
                 salle = s;

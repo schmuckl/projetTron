@@ -37,7 +37,7 @@
         <title>Connexion</title>
     </head>
     <body>
-        <div name="formulaireConnexion">
+        <div name="formulaireConnexion" id="formulaireConnexion">
             <input type="text" id="pseudo" placeholder="Pseudo"/>
             <input type="password" id="password" placeholder="Mon mot de passe"/>
             <button onclick="connexion()">Me connecter</button>
@@ -46,7 +46,13 @@
         <button type="submit" onclick="toSnake()">to snake</button>
         <button type="submit" onclick="toTron()">to tron</button>
 
-        <div id="fileDattente" style="visibility: hidden;">Pas encore dans une file d'attente...</div>
+        <div id="infosConnexion" style="visibility: hidden;">
+            Vous êtes connectés en tant que : <p id="infosPseudo"></p>
+        </div>
+        <br>
+        <div id="infosFileDattente" style="visibility: hidden;">
+            <p id="fileDattente">Pas encore dans une file d'attente...</p><p id="fileNbJoueurs"></p>
+        </div>
 
         <script>
             function toSnake() {

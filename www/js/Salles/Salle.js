@@ -9,10 +9,10 @@ mongoose.connect("mongodb://localhost:27017/" + "projetTron");
 
 module.exports = {
     Salle: class {
-        constructor() {
-            this.id = null;
-            this.joueurs = []; 
-            this.nbJoueurs = 0;
+        constructor(id = 0, joueurs = [], nbJoueurs = 0) {
+            this.id = id;
+            this.joueurs = joueurs;
+            this.nbJoueurs = nbJoueurs;
         }  
 
         getJoueurs() {
@@ -24,12 +24,12 @@ module.exports = {
         }
         
         ajouterJoueur(joueur) {
-            if (this.joueurs.length <= 2) {
+            if (this.nbJoueurs < 2) {
                 this.joueurs.push(joueur);
                 this.nbJoueurs++;
             }
             //else ON NE PEUT PAS AJOUTER UN JOUEUR DE PLUS
-        } 
+        }
 
         supprimerJoueur(joueur) {
             delete this.joueurs[joueur]; 
@@ -37,7 +37,7 @@ module.exports = {
         }
 
         isSallePleine() {
-            return this.nbJoueurs <= 2;
+            return this.nbJoueurs >= 2;
         }
     }
 }

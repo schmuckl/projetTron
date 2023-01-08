@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const JoueursConnectesListe = require('./JoueursConnectesListe');
 // mongoose.connect(urlBdd + nomBdd);
 mongoose.connect("mongodb://localhost:27017/" + "projetTron");
 
@@ -25,44 +26,40 @@ module.exports = {
 			this.score = score;
 		}
 
-		saveJoueurBdd() {
-			const nouveauJoueur = new JoueurBdd({pseudo : this.pseudo, password: this.password, score: this.score});
-			nouveauJoueur.save();
-		}
+		async findJoueurBdd() {
 
-		findJoueurBdd() {
-			let bool = false;
+			let messageJson = {
+				type : "connexion",
+				statut : false,
+				message : "",
+				pseudo : ""
+			}
 
-			JoueurBdd.findOne({name : this.pseudo, password: this.password}).exec((err, joueur)=> {
-				// Dans le cas où une erreur serait rencontrée lors du findOne
-				if (err) {
-					console.log(err);
-				}
-				if (joueur != null) {
-					bool = true;
-				}
+			 // Retourne une promesse qui sera résolue on aura trouvé ou non le joueur
+			 await new Promise((resolveConnection) => {
+				// Cherche le joueur via son pseudo et son password
+				JoueurBdd.findOne({pseudo: this.pseudo, password: this.password}).exec(async (err, joueur)=> {
+					if (err) {
+						resolveConnection(messageJson);
+					}
+					// Si un joueur a été trouvé
+					if (joueur != null) {
+						messageJson.message = "Connexion OK";
+						messageJson.statut = true;
+					} else {
+						await new Promise((resolveCreation) => {
+							const nouveauJoueur = new JoueurBdd({pseudo : this.pseudo, password: this.password, score: this.score});
+							nouveauJoueur.save();
+							resolveCreation();
+						})
+						messageJson.message = "Votre compte a été créé.";
+						messageJson.statut = true;
+					}
+					resolveConnection(messageJson);
+				});
 			});
 			
-			return bool;
+			return messageJson;
 		}
 	}
 }
-
-
-
-
-
-
-/* var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
-
-// Récupère tous les éléments présents dans la collection Joueurs
-MongoClient.connect(url, function (err, db) {
-	if (err) throw err;
-	var dbo = db.db("projetTron");
-	dbo.collection("Joueurs").find({}).toArray(function (err, result) {
-		if (err) throw err;
-		console.log(result);
-		db.close();
-	});
-}); */
