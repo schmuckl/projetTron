@@ -28,54 +28,49 @@ ws.onmessage = function(message) {
     messageJson = JSON.parse(message.data);
 
     let msg;
+
+    // Pour tous les affichages aux clients
     let formulaireConnexion = document.getElementById("formulaireConnexion");
     let infosConnexion = document.getElementById("infosConnexion");
     let infosFileDattente = document.getElementById("infosFileDattente");
     let pfileDattente = document.getElementById("fileDattente");
     let pfileNbJoueurs = document.getElementById("fileNbJoueurs");
 
-
-    // Maj du nombre de joueurs présents dans la queue
-    if (messageJson.type == "majNbJoueurs") {
-        pfileNbJoueurs.innerHTML = messageJson.nbJoueurs + "/2";
-    }
-
     console.log(messageJson);
 
-    // Dans le cas où le client s'est connecté, on lance la file d'attente
-    if (messageJson.type == "connexion" && messageJson.statut) {
-        msg = {
-            type : "attenteDunePartie",
-            pseudo : messageJson.pseudo
-        }
-        formulaireConnexion.style.visibility = "hidden";
-        infosConnexion.style.visibility = "visible";
-        let pPseudo = document.getElementById("infosPseudo");
-        pPseudo.innerHTML = messageJson.pseudo;
-        ws.send(JSON.stringify(msg));
-    }
-    // Dans le cas où le joueur est en file d'attente, on l'affiche à ce dernier
-    if (messageJson.type == "fileDattente") {
-        infosFileDattente.style.visibility = "visible";
-        if (!messageJson.salle.sallePleine) {
-            pfileDattente.innerHTML = "Dans la file d'attente de la salle " + messageJson.salle.id;
-        } else if (messageJson.salle.sallePleine) {
-            pfileDattente.innerHTML = "Dans la file d'attente de la salle " + messageJson.salle.id;
+    switch(messageJson.type) {
+        // Dans le cas d'une connexion réussie
+        case 'connexion' :
             msg = {
-                type : "lancementPartie",
-                salleId : messageJson.salle.id,
-                joueurs : messageJson.salle.joueurs
+                type : "attenteDunePartie",
+                pseudo : messageJson.pseudo
             }
+            formulaireConnexion.style.visibility = "hidden";
+            infosConnexion.style.visibility = "visible";
+            let pPseudo = document.getElementById("infosPseudo");
+            pPseudo.innerHTML = messageJson.pseudo;
             ws.send(JSON.stringify(msg));
-        }
-    }
+            break;
 
-    if (messageJson.type = "lancementPartie") { // On lance la partie
-        // let joueurs = messageJson.salle.joueurs;
-        // joueurs.forEach(j => {
-        //     console.log(j);
-        // });
-        // window.location.href = "../tron.html";
+        // Dans le cas où le joueur est en file d'attente
+        case 'fileDattente' :
+            infosFileDattente.style.visibility = "visible";
+            pfileDattente.innerHTML = "Dans la file d'attente de la salle " + messageJson.salle.id;
+            break;
+
+        // Maj du nombre de joueurs présents dans la queue
+        case 'majNbJoueurs' :
+            pfileNbJoueurs.innerHTML = messageJson.salle.nbJoueurs + "/2";
+            break;
+            
+        case 'lancementPartie' :
+            console.log("OOOOOOOOOOON Y VA");
+            let joueurs = messageJson.salle.joueurs;
+            joueurs.forEach(j => {
+                console.log(j);
+            });
+            window.location.href = "../tron.html";
+            break;
     }
 }
 

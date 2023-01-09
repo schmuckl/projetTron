@@ -20,7 +20,7 @@ const JoueurBdd = mongoose.model('joueurs', joueurSchema);
 
 module.exports = {
 	Joueur: class {
-		constructor(pseudo, password = null, score = null) {
+		constructor(pseudo, password = null, score = 0) {
 			this.pseudo = pseudo;
 			this.password = password;
 			this.score = score;
@@ -40,7 +40,7 @@ module.exports = {
 				// Cherche le joueur via son pseudo et son password
 				JoueurBdd.findOne({pseudo: this.pseudo, password: this.password}).exec(async (err, joueur)=> {
 					if (err) {
-						resolveConnection(messageJson);
+						resolveConnection(null);
 					}
 					// Si un joueur a été trouvé
 					if (joueur != null) {

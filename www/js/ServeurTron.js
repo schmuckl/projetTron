@@ -55,7 +55,7 @@ wsServer.on('request', function (request) {
 });
 
 // Gère la connexion et la création d'un joueur
-function connexionJoueurs(message, connexion) {
+async function connexionJoueurs(message, connexion) {
 
     // Message à renvoyer
     let messageJson = {
@@ -70,13 +70,10 @@ function connexionJoueurs(message, connexion) {
     } else {
         let j = new Joueur(message.pseudo, message.password, 0);
         // On regarde s'il existe
-        messageJson = j.findJoueurBdd();
-
-        console.log(messageJson);
+        messageJson = await j.findJoueurBdd();
+        if (messageJson.statut == true) JoueursConnectesListe.ajouterJoueur(j);
     }
 
-    if (messageJson.statut == true) JoueursConnectesListe.ajouterJoueur(j);
-    // TODO LE MESSAGE EST PAS BON 
     messageJson.pseudo = message.pseudo;
     connexion.send(JSON.stringify(messageJson));
 }
@@ -92,36 +89,64 @@ function attenteDunePartie(joueur, connexion) {
         type : "fileDattente",
         salle : {
             id : salleDattente.id,
-            joueurs : salleDattente.getJoueurs(),
-            sallePleine : false
+            joueurs : salleDattente.getJoueurs()
         }
     }
 
-    let msgInfosNbJoueurs = {
-        type : "majNbJoueurs",
+    let infosSalle = {
+        idSalle : salleDattente.id,
+        joueurs : salleDattente.getJoueurs(),
         nbJoueurs : salleDattente.getNbJoueurs()
     }
-    connexion.send(JSON.stringify(msgInfosNbJoueurs));
-    connexion.send(JSON.stringify(messageJson));
 
+    // Permet d'envoyer la mise à jour du nombre de joueurs dans la salle à tous les clients présents dans cette salle
+    eventEmitter.on("majNbJoueurs", (salle) => majNbJoueurs(salle, salleDattente.getId(), connexion));
+    eventEmitter.emit("majNbJoueurs", infosSalle);
+    
+    // De la même manière que pour la mise à jour du nombre de joueurs dans la salle, on lance un message à tous les clients si la salle est pleine
+    eventEmitter.on("lancementPartie", (salle) => lancementPartie(salle, salleDattente.getId(), connexion));
+    
     if (salleDattente.isSallePleine()) {
-        messageJson.salle.sallePleine = true;
+        eventEmitter.emit("lancementPartie", infosSalle);
         lancementPartie(messageJson, connexion);
     }
+    
+    connexion.send(JSON.stringify(messageJson));
 }
 
-// Gère le lancement de la partie
-function lancementPartie(message, connexion) {
-    let joueurs = message.salle.joueurs;
-    let salleId = message.salle.id;
-    console.log("LANCEMENT PARTIE");
-    console.log(joueurs);
+// Envoi un message au client pour le lancement de la partie
+function lancementPartie(salle, salle_id, connexion) {
+
+    if (salle.idSalle != salle_id) {
+        return;
+    }
+
     let msg = {
         type : "lancementPartie",
-        salleId : salleId,
-        joueurs : joueurs
+        salle : {
+            id : salle.idSalle,
+            joueurs : salle.joueurs
+        }
     }
     connexion.send(JSON.stringify(msg));
-    // On les envoi sur le jeu en mettant les joueurs à leurs positions de départs
 
+}
+
+// Envoi un message au client pour la MAJ du nombre de joueurs dans la salle d'attente
+function majNbJoueurs(salle, salle_id, connexion) {
+    
+    if (salle.idSalle != salle_id) {
+        return;
+    }
+    
+    let msg = {
+        type : "majNbJoueurs",
+        salle : {
+            id : salle.idSalle,
+            joueurs : salle.joueurs,
+            nbJoueurs : salle.nbJoueurs
+        }
+    }
+
+    connexion.send(JSON.stringify(msg));
 }

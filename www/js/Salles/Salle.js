@@ -39,5 +39,9 @@ module.exports = {
         isSallePleine() {
             return this.nbJoueurs >= 2;
         }
+
+        getId() {
+            return this.id;
+        }
     }
 }
