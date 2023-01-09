@@ -35,6 +35,8 @@ ws.onmessage = function(message) {
     let infosFileDattente = document.getElementById("infosFileDattente");
     let pfileDattente = document.getElementById("fileDattente");
     let pfileNbJoueurs = document.getElementById("fileNbJoueurs");
+    let divJeu = document.getElementById("jeu");
+    let divConnexion = document.getElementById("connexion");
 
     console.log(messageJson);
 
@@ -64,18 +66,19 @@ ws.onmessage = function(message) {
             break;
             
         case 'lancementPartie' :
-            console.log("OOOOOOOOOOON Y VA");
-            let joueurs = messageJson.salle.joueurs;
-            joueurs.forEach(j => {
-                console.log(j);
+
+            messageJson.salle.joueurs.forEach(j => {
+                if (localStorage.getItem("pseudo") == j.pseudo) {
+                    position_joueur = j.position;
+                }
             });
-            window.location.href = "../tron.html";
+
+            divJeu.style.visibility = "visible";
+            divConnexion.style.visibility = "hidden";
+
             break;
     }
 }
-
-
-
 
 // Quand le client appuie sur le bouton se connecter
 ws.meConnecter = function () {
@@ -83,9 +86,6 @@ ws.meConnecter = function () {
     let mdp = document.getElementById("password").value;
 
     let msg = null;
-
-    console.log(pseudo);
-    console.log(mdp);
 
     if (pseudo != null && mdp != null) {
         msg = {

@@ -27,18 +27,22 @@ wsServer.on('request', function (request) {
 
         message = JSON.parse(message.utf8Data);
 
-        // Gestion des salles "d'attente" et des salles où il faut lancer la partie, ainsi que de la connexion des joueurs
+        // Gestion de la connexion utilisateur, de la salle d'attente et des mouvements de joueurs
         if (message.type == "connexion") {
             // Dans le cas où le joueur n'existe pas, on va le créer
             connexionJoueurs(message, connexion);
-        }
-        if (message.type == "attenteDunePartie") {
+
+        } else if (message.type == "attenteDunePartie") {
             joueur = new Joueur(message.pseudo);
             attenteDunePartie(joueur, connexion);
+
+        } else if (message.type == "mouvementJoueur") {
+            console.log(message);
+            mouvementJoueur(message);
+
+        } else if (message.type == "gameOver") {
+            console.log("AAAAAAAAAAAAAAAAAAAA");
         }
-        // if (message.type == "lancementPartie") {
-        //     lancementPartie(message, connexion);
-        // }
     });
 
     // Quand la websocket se ferme, l'utilisateur ferme son onglet ou navigateur ou par un timer qu'on a mis (pas notre cas ici)
@@ -81,7 +85,6 @@ async function connexionJoueurs(message, connexion) {
 // Gère le lancement d'une file d'attente
 function attenteDunePartie(joueur, connexion) {
     
-    console.log("attentedunepartie()");
     // On ajoute le joueur à la salle d'attente
     let salleDattente = SallesController.ajouterJoueurDansSalle(joueur);
 
@@ -110,7 +113,7 @@ function attenteDunePartie(joueur, connexion) {
         eventEmitter.emit("lancementPartie", infosSalle);
         lancementPartie(messageJson, connexion);
     }
-    
+
     connexion.send(JSON.stringify(messageJson));
 }
 
@@ -119,6 +122,28 @@ function lancementPartie(salle, salle_id, connexion) {
 
     if (salle.idSalle != salle_id) {
         return;
+    }
+
+    let position_joueur_depart = {
+        x : 2,
+        y : 14
+    }
+
+    // Permet de gérer la position initiale des joueurs
+    for (let i = 0; i < salle.joueurs.length; i++) {
+        const j = salle.joueurs[i];
+        if (i == 0) {
+            j.position = {
+                x : position_joueur_depart.x,
+                y : position_joueur_depart.y
+            }
+        } else {
+            j.position = {
+                x : position_joueur_depart.x + 25,
+                y : position_joueur_depart.y
+            }
+            position_joueur_depart = j.position;
+        }
     }
 
     let msg = {
@@ -149,4 +174,10 @@ function majNbJoueurs(salle, salle_id, connexion) {
     }
 
     connexion.send(JSON.stringify(msg));
+}
+
+
+// Permet de gérer tous événements liés aux mouvements des joueurs
+function mouvementJoueur(message) {
+
 }
