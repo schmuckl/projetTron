@@ -1,9 +1,9 @@
+const ws = new WebSocket('ws://localhost:9898/');
 
 let grille = new Grille(tailleGrille);
 
-
 function init() {
-    // addNewPosition(cases[position_joueur.x][position_joueur.y]);
+    console.log("ROMAIN EST TROP FOR");
     creerGrille();
     setPositionsMur();
     setPositionsDepart();
@@ -39,8 +39,6 @@ function setPositionsDepart() {
             case_.setDepart();
         }
     });
-    document.getElementById(423).classList.add("currentPosition");
-    document.getElementById(446).classList.add("currentPosition");
 
     console.log(grille.cases);
 }
@@ -97,7 +95,7 @@ function mouvement(event) {
                 
                 majMouvement(position_joueur, 40);
 
-            }, 200);
+            }, 300);
             break;
         case 38:
             stopInterval();
@@ -107,7 +105,7 @@ function mouvement(event) {
                 majMouvement(position_joueur, 38);
 
                 
-            }, 200)
+            }, 300);
             break;
         case 37:
             stopInterval();
@@ -117,7 +115,7 @@ function mouvement(event) {
                 majMouvement(position_joueur, 37);
 
 
-            }, 200);
+            }, 300);
             break;
         case 39:
             stopInterval();
@@ -125,7 +123,7 @@ function mouvement(event) {
                 console.log("right");
                 majMouvement(position_joueur, 39);
 
-            }, 200);
+            }, 300);
             break;
     }
 }
@@ -135,6 +133,7 @@ function majMouvement(position_joueur, keycode) {
 
     let msg = {
         type : "mouvementJoueur",
+        salleId : localStorage.getItem("salleId"),
         joueur : {
             pseudo : localStorage.getItem("pseudo"),
             pos_x : position_joueur.x,
@@ -145,7 +144,7 @@ function majMouvement(position_joueur, keycode) {
     console.log(msg);
 
     case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
-    setCaseVisitee(case_);
+    case_.setMurJoueur();
     switch(keycode) {
         case 40:
             position_joueur.y++;
@@ -182,15 +181,12 @@ function ecouterJoueur() {
     window.addEventListener("keyup", mouvement);
 }
 
-// Permet de mettre à jour la case visitée (couleur et attribut isWall)
-function setCaseVisitee(caseVisite) {
-   let td = document.getElementById(caseVisite.val);
-   td.classList.remove("currentPosition");
-   td.classList.add("caseVisite"); 
-   td.setAttribute("style", "background-color:orange");
-   grille.cases[caseVisite.val].isWall = true;
-}
+function majMouvementAdverse(joueur) {
 
+    case_ = grille.getCaseByCoord(joueur.position.pos_x, joueur.position.pos_y);
+    case_.setMurJoueur();
+
+}
 
 //si la nouvelle case est un mur, alors c'est perdu
 function gameOver(case_) {

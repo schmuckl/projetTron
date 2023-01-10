@@ -1,4 +1,3 @@
-const ws = new WebSocket('ws://localhost:9898/');
 
 function connexion() {
     let pseudo = document.getElementById("pseudo").value;
@@ -75,7 +74,16 @@ ws.onmessage = function(message) {
 
             divJeu.style.visibility = "visible";
             divConnexion.style.visibility = "hidden";
+            infosFileDattente.style.visibility = "hidden";
 
+            localStorage.setItem("salleId", messageJson.salle.id);
+
+            init();
+
+            break;
+
+        case 'mouvementAdverse':
+            majMouvementAdverse(messageJson.salle.joueur);
             break;
     }
 }

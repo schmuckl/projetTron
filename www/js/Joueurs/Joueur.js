@@ -20,10 +20,19 @@ const JoueurBdd = mongoose.model('joueurs', joueurSchema);
 
 module.exports = {
 	Joueur: class {
-		constructor(pseudo, password = null, score = 0) {
+		constructor(pseudo, connexion, password = null, score = 0) {
 			this.pseudo = pseudo;
+			this.connexion = connexion;
 			this.password = password;
 			this.score = score;
+		}
+
+		getConnexion() {
+			return this.connexion;
+		}
+
+		getPseudo() {
+			return this.pseudo;
 		}
 
 		async findJoueurBdd() {

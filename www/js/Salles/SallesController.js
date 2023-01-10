@@ -24,8 +24,6 @@ class SallesController {
         let joueurAjoute = false;
         let salle = null;
 
-        console.log("AjouterJoueurDansSalle()");
-
         this.salles.forEach(s => {
             if (!s.isSallePleine()) {
                 s.ajouterJoueur(joueur);
@@ -39,6 +37,22 @@ class SallesController {
             salle = this.creerSalle(joueur);
             joueurAjoute = true;
         }
+        return salle;
+    }
+
+    // Récupère l'élément Salle dans lequel se trouve un joueur par son pseudo
+    getSalleByJoueurPseudo(pseudo) {
+        let salle = null;
+        this.salles.forEach(s => {
+            console.log(s);
+            s.getJoueurs().forEach(j => {
+                if (j.pseudo == pseudo) {
+                    salle = s;
+                    return;
+                }
+            });
+        });
+        console.log(salle);
         return salle;
     }
 } 

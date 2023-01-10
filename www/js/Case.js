@@ -13,12 +13,14 @@ class Case {
         td.setAttribute("id", value);
     }
 
-    setWall() {
+    setMurJoueur() {
         this.isWall = true;
+        let td = document.getElementById(this.val);
+        td.setAttribute("style", "background-color:orange");
     }
 
     setDepart() {
         let td = document.getElementById(this.val);
-        td.setAttribute("style", "background-color:red");
+        td.classList.add("currentPosition");
     }
 }

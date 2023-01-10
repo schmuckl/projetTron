@@ -16,7 +16,38 @@ module.exports = {
         }  
 
         getJoueurs() {
+            // Array des infos des joueurs sans la connexion
+            // let infosJoueurs = [];
+            // this.joueurs.forEach(j => {
+            //     infosJoueurs.push({
+            //         "pseudo" : j.pseudo,
+            //         "password" : j.password,
+            //         "score" : j.score
+            //     });
+            // });
+            // return infosJoueurs;
             return this.joueurs;
+        }
+
+        getInfosJoueurs() {
+            // Array des infos des joueurs sans la connexion
+            let infosJoueurs = [];
+            this.joueurs.forEach(j => {
+                infosJoueurs.push({
+                    "pseudo" : j.pseudo,
+                    "password" : j.password,
+                    "score" : j.score
+                });
+            });
+            return infosJoueurs;
+        }
+
+        getPseudosJoueurs() {
+            let pseudos = [];
+            this.joueurs.forEach(j => {
+                pseudos.push(j.getPseudo());
+            });
+            return pseudos;
         }
         
         getNbJoueurs() {
@@ -43,5 +74,18 @@ module.exports = {
         getId() {
             return this.id;
         }
+
+        // Un joueur dans une salle a forcément une position
+        // getPositionsJoueurs() {
+        //     let positions = [];
+        //     this.joueurs.forEach(j => {
+        //         positions.push({
+        //             pseudo : j.getPseudo(),
+        //             position : {
+        //                 x : 
+        //             }
+        //         })
+        //     });
+        // }
     }
 }

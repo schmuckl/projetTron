@@ -23,22 +23,20 @@ wsServer.on('request', function (request) {
     // Le joueur en cours
     let joueur = null;
 
-    connexion.on('message', function (message) {
+    connexion.on('message', async function (message) {
 
         message = JSON.parse(message.utf8Data);
 
         // Gestion de la connexion utilisateur, de la salle d'attente et des mouvements de joueurs
         if (message.type == "connexion") {
             // Dans le cas où le joueur n'existe pas, on va le créer
-            connexionJoueurs(message, connexion);
+            joueur = await connexionJoueurs(message, connexion);
 
         } else if (message.type == "attenteDunePartie") {
-            joueur = new Joueur(message.pseudo);
             attenteDunePartie(joueur, connexion);
 
         } else if (message.type == "mouvementJoueur") {
-            console.log(message);
-            mouvementJoueur(message);
+            mouvementJoueur(joueur, message);
 
         } else if (message.type == "gameOver") {
             console.log("AAAAAAAAAAAAAAAAAAAA");
@@ -69,10 +67,12 @@ async function connexionJoueurs(message, connexion) {
         pseudo : ""
     }
 
+    let j = null;
+
     if (JoueursConnectesListe.isJoueurConnecte(message.pseudo) == true) {
         messageJson.message = "Vous êtes déjà connecté autre part.";
     } else {
-        let j = new Joueur(message.pseudo, message.password, 0);
+        j = new Joueur(message.pseudo, connexion, message.password, 0);
         // On regarde s'il existe
         messageJson = await j.findJoueurBdd();
         if (messageJson.statut == true) JoueursConnectesListe.ajouterJoueur(j);
@@ -80,6 +80,7 @@ async function connexionJoueurs(message, connexion) {
 
     messageJson.pseudo = message.pseudo;
     connexion.send(JSON.stringify(messageJson));
+    return j;
 }
 
 // Gère le lancement d'une file d'attente
@@ -92,13 +93,13 @@ function attenteDunePartie(joueur, connexion) {
         type : "fileDattente",
         salle : {
             id : salleDattente.id,
-            joueurs : salleDattente.getJoueurs()
+            joueurs : salleDattente.getInfosJoueurs()
         }
     }
 
     let infosSalle = {
         idSalle : salleDattente.id,
-        joueurs : salleDattente.getJoueurs(),
+        joueurs : salleDattente.getInfosJoueurs(),
         nbJoueurs : salleDattente.getNbJoueurs()
     }
 
@@ -111,7 +112,7 @@ function attenteDunePartie(joueur, connexion) {
     
     if (salleDattente.isSallePleine()) {
         eventEmitter.emit("lancementPartie", infosSalle);
-        lancementPartie(messageJson, connexion);
+        // lancementPartie(messageJson, joueur.getConnexion());
     }
 
     connexion.send(JSON.stringify(messageJson));
@@ -124,23 +125,28 @@ function lancementPartie(salle, salle_id, connexion) {
         return;
     }
 
-    let position_joueur_depart = {
+    let position_joueur_depart1 = {
         x : 2,
         y : 14
     }
 
-    // Permet de gérer la position initiale des joueurs
-    for (let i = 0; i < salle.joueurs.length; i++) {
+    let position_joueur_depart2 = {
+        x : position_joueur_depart1.x + 25,
+        y : 14
+    }
+
+    // Permet de gérer la position initiale des joueurs pour 2 joueurs actuellement
+    for (let i = 0; i < salle.nbJoueurs; i++) {
         const j = salle.joueurs[i];
         if (i == 0) {
             j.position = {
-                x : position_joueur_depart.x,
-                y : position_joueur_depart.y
+                x : position_joueur_depart1.x,
+                y : position_joueur_depart1.y
             }
         } else {
             j.position = {
-                x : position_joueur_depart.x + 25,
-                y : position_joueur_depart.y
+                x : position_joueur_depart2.x,
+                y : position_joueur_depart2.y
             }
             position_joueur_depart = j.position;
         }
@@ -172,12 +178,41 @@ function majNbJoueurs(salle, salle_id, connexion) {
             nbJoueurs : salle.nbJoueurs
         }
     }
-
+    
     connexion.send(JSON.stringify(msg));
 }
 
 
-// Permet de gérer tous événements liés aux mouvements des joueurs
-function mouvementJoueur(message) {
+// Permet de gérer tous événements liés aux mouvements des joueurs et de l'envoyer à tous les clients de la même salle
+function mouvementJoueur(joueur, message) {
+    
+    let salleDuJoueur = SallesController.getSalleByJoueurPseudo(joueur.getPseudo());
+
+    let joueursDansLaSalle = salleDuJoueur.getJoueurs();
+
+    let infosJoueur = {
+        pseudo : "",
+        position : {
+            pos_x : 0,
+            pos_y : 0
+        }
+    }
+
+    // On exclut le joueur "actuel" du message contenant les positions à envoyer
+    infosJoueur.pseudo = joueur.getPseudo();
+    infosJoueur.position.pos_x = message.joueur.pos_x;
+    infosJoueur.position.pos_y = message.joueur.pos_y;
+    
+    let msg = {
+        type : "mouvementAdverse",
+        salle : {
+            id : salleDuJoueur.getId(),
+            joueur : infosJoueur
+        }
+    }
+
+    joueursDansLaSalle.forEach(j => {
+        if (j.getPseudo() != joueur.getPseudo()) j.getConnexion().send(JSON.stringify(msg));
+    });
 
 }
