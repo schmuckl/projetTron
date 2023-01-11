@@ -82,14 +82,21 @@ function stopInterval() {
 
 // Fonction permettant la prise en compte des actions du joueur (flèches directionnelles)
 // A chaque nouvelle position, on envoi un msg au serveur
-function mouvement(event) {
 
-    
+let direction = 0;
+//definit la direction de tron:  1 up , 2 down , 3 left , 4 right
+function mouvement(event) {
 
     event.preventDefault();
     switch (event.keyCode) {
         case 40:
+            console.log('direction'+direction)
+            //si la direction de tron est up , le mouvement down est interdit
+            if(direction == 1){
+                return;
+            }
             stopInterval();
+            direction = 2;
             interval = setInterval(function() {
                 console.log("down");
                 
@@ -98,9 +105,16 @@ function mouvement(event) {
             }, 300);
             break;
         case 38:
+            console.log('direction'+direction)
+            //si la direction de tron est down , le mouvement up est interdit
+            if(direction == 2){
+                return;
+            }
             stopInterval();
+            direction = 1;
             interval = setInterval(function() {
                 console.log("up");
+               
                 
                 majMouvement(position_joueur, 38);
 
@@ -108,7 +122,13 @@ function mouvement(event) {
             }, 300);
             break;
         case 37:
+            console.log('direction'+direction)
+            //si la direction de tron est right , le mouvement left est interdit
+            if(direction == 4){
+                return;
+            }
             stopInterval();
+            direction = 3;
             interval = setInterval(function() {
                 console.log("left");
                 
@@ -118,9 +138,16 @@ function mouvement(event) {
             }, 300);
             break;
         case 39:
+            console.log('direction'+direction)
+            //si la direction de tron est left , le mouvement right est interdit
+            if(direction == 3){
+                return;
+            }
             stopInterval();
+            direction = 4;
             interval = setInterval(function() {
                 console.log("right");
+                
                 majMouvement(position_joueur, 39);
 
             }, 300);
