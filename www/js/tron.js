@@ -80,71 +80,58 @@ function stopInterval() {
     clearInterval(interval);
 }
 
+// Empêche au joueur d'aller dans la direction d'où il vient
+    // Correspond au keyCode de la touche précédente
+let directionPrecedente = 0;
+
 // Fonction permettant la prise en compte des actions du joueur (flèches directionnelles)
 // A chaque nouvelle position, on envoi un msg au serveur
-
-let direction = 0;
-//definit la direction de tron:  1 up , 2 down , 3 left , 4 right
 function mouvement(event) {
 
     event.preventDefault();
     switch (event.keyCode) {
         case 40:
-            console.log('direction'+direction)
-            //si la direction de tron est up , le mouvement down est interdit
-            if(direction == 1){
+            if(directionPrecedente == 38) {
                 return;
             }
+            directionPrecedente = event.keyCode;
             stopInterval();
-            direction = 2;
             interval = setInterval(function() {
                 console.log("down");
-                
                 majMouvement(position_joueur, 40);
 
             }, 300);
             break;
         case 38:
-            console.log('direction'+direction)
-            //si la direction de tron est down , le mouvement up est interdit
-            if(direction == 2){
+            if(directionPrecedente == 40) {
                 return;
             }
+            directionPrecedente = event.keyCode;
             stopInterval();
-            direction = 1;
             interval = setInterval(function() {
                 console.log("up");
-               
-                
                 majMouvement(position_joueur, 38);
-
                 
             }, 300);
             break;
         case 37:
-            console.log('direction'+direction)
-            //si la direction de tron est right , le mouvement left est interdit
-            if(direction == 4){
+            if(directionPrecedente == 39) {
                 return;
             }
+            directionPrecedente = event.keyCode;
             stopInterval();
-            direction = 3;
             interval = setInterval(function() {
                 console.log("left");
-                
                 majMouvement(position_joueur, 37);
-
 
             }, 300);
             break;
         case 39:
-            console.log('direction'+direction)
-            //si la direction de tron est left , le mouvement right est interdit
-            if(direction == 3){
+            if(directionPrecedente == 37) {
                 return;
             }
+            directionPrecedente = event.keyCode;
             stopInterval();
-            direction = 4;
             interval = setInterval(function() {
                 console.log("right");
                 
