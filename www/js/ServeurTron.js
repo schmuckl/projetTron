@@ -38,8 +38,8 @@ wsServer.on('request', function (request) {
         } else if (message.type == "mouvementJoueur") {
             mouvementJoueur(joueur, message);
 
-        } else if (message.type == "gameOver") {
-            console.log("AAAAAAAAAAAAAAAAAAAA");
+        } else if (message.type == "perdu") {
+            finDePartie(joueur);
         }
     });
 
@@ -121,6 +121,8 @@ function attenteDunePartie(joueur, connexion) {
 // Envoi un message au client pour le lancement de la partie
 function lancementPartie(salle, salle_id, connexion) {
 
+    let couleursJoueurs = ["red", "blue", "green", "purple"];
+
     if (salle.idSalle != salle_id) {
         return;
     }
@@ -148,8 +150,8 @@ function lancementPartie(salle, salle_id, connexion) {
                 x : position_joueur_depart2.x,
                 y : position_joueur_depart2.y
             }
-            position_joueur_depart = j.position;
         }
+        j.couleur = couleursJoueurs[i];
     }
 
     let msg = {
@@ -195,7 +197,8 @@ function mouvementJoueur(joueur, message) {
         position : {
             pos_x : 0,
             pos_y : 0
-        }
+        },
+        couleur : message.joueur.couleur
     }
 
     // On exclut le joueur "actuel" du message contenant les positions à envoyer
@@ -215,4 +218,21 @@ function mouvementJoueur(joueur, message) {
         if (j.getPseudo() != joueur.getPseudo()) j.getConnexion().send(JSON.stringify(msg));
     });
 
+}
+
+// Permet de gérer la fin de la partie
+function finDePartie(joueur) {
+    
+    let salleDuJoueur = SallesController.getSalleByJoueurPseudo(joueur.getPseudo());
+
+    let joueursDansLaSalle = salleDuJoueur.getJoueurs();
+
+    let msg = {
+        type : "finDePartie",
+        pseudo : joueur.pseudo
+    }
+
+    joueursDansLaSalle.forEach(j => {
+        j.getConnexion().send(JSON.stringify(msg));
+    });
 }

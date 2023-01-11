@@ -18,3 +18,5 @@ let position_joueur = {
     x : 26,
     y : 14
 }
+
+let couleur_joueur = "red";

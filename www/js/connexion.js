@@ -22,6 +22,10 @@ function connexion() {
     ws.send(JSON.stringify(msg));
 }
 
+function rejouer() {
+
+}
+
 ws.onmessage = function(message) {
 
     messageJson = JSON.parse(message.data);
@@ -69,6 +73,7 @@ ws.onmessage = function(message) {
             messageJson.salle.joueurs.forEach(j => {
                 if (localStorage.getItem("pseudo") == j.pseudo) {
                     position_joueur = j.position;
+                    couleur_joueur = j.couleur;
                 }
             });
 
@@ -78,29 +83,16 @@ ws.onmessage = function(message) {
 
             localStorage.setItem("salleId", messageJson.salle.id);
 
-            init();
+            init(messageJson.salle.joueurs);
 
             break;
 
         case 'mouvementAdverse':
             majMouvementAdverse(messageJson.salle.joueur);
             break;
+
+        case 'finDePartie':
+            finirPartie(message.pseudo);
+            break;
     }
 }
-
-// Quand le client appuie sur le bouton se connecter
-ws.meConnecter = function () {
-    let pseudo = document.getElementById("pseudo").value;
-    let mdp = document.getElementById("password").value;
-
-    let msg = null;
-
-    if (pseudo != null && mdp != null) {
-        msg = {
-            type : "connexion",
-            pseudo: pseudo,
-            password: mdp
-        };
-    }
-    ws.send(JSON.stringify(msg));
-};

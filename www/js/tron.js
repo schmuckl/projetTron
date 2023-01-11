@@ -2,11 +2,10 @@ const ws = new WebSocket('ws://localhost:9898/');
 
 let grille = new Grille(tailleGrille);
 
-function init() {
-    console.log("ROMAIN EST TROP FOR");
+function init(joueurs) {
     creerGrille();
     setPositionsMur();
-    setPositionsDepart();
+    setPositionsDepart(joueurs);
     ecouterJoueur();
 }
 
@@ -30,14 +29,11 @@ function creerGrille() {
     return;
 }
 
-function setPositionsDepart() {
-    grille.cases.forEach(case_ => {
-        if(case_.pos_x == position_joueur_depart_1.x && case_.pos_y == position_joueur_depart_1.y) {
-            case_.setDepart();
-        }
-        if(case_.pos_x == position_joueur_depart_2.x && case_.pos_y == position_joueur_depart_2.y) {
-            case_.setDepart();
-        }
+function setPositionsDepart(joueurs) {
+
+    joueurs.forEach(j => {
+        const case_ = grille.getCaseByCoord(j.position.x, j.position.y);
+        case_.setDepart(j.couleur);
     });
 
     console.log(grille.cases);
@@ -69,8 +65,9 @@ function setPositionsMur() {
     grille.setCases(cases);
 }
 
-function addNewPosition(la_case) {
-    document.getElementById(la_case.val).classList.add("currentPosition");
+function addNewPosition(la_case, couleur_joueur) {
+    let td = document.getElementById(la_case.val);
+    td.setAttribute("style", "background-color:" + couleur_joueur);
 }
 
 // init un interval pour mouvement automatique 
@@ -98,7 +95,7 @@ function mouvement(event) {
             stopInterval();
             interval = setInterval(function() {
                 console.log("down");
-                majMouvement(position_joueur, 40);
+                majMouvement(position_joueur, couleur_joueur, 40);
 
             }, 300);
             break;
@@ -110,7 +107,7 @@ function mouvement(event) {
             stopInterval();
             interval = setInterval(function() {
                 console.log("up");
-                majMouvement(position_joueur, 38);
+                majMouvement(position_joueur, couleur_joueur, 38);
                 
             }, 300);
             break;
@@ -122,7 +119,7 @@ function mouvement(event) {
             stopInterval();
             interval = setInterval(function() {
                 console.log("left");
-                majMouvement(position_joueur, 37);
+                majMouvement(position_joueur, couleur_joueur, 37);
 
             }, 300);
             break;
@@ -135,7 +132,7 @@ function mouvement(event) {
             interval = setInterval(function() {
                 console.log("right");
                 
-                majMouvement(position_joueur, 39);
+                majMouvement(position_joueur, couleur_joueur, 39);
 
             }, 300);
             break;
@@ -143,7 +140,7 @@ function mouvement(event) {
 }
 
 
-function majMouvement(position_joueur, keycode) {
+function majMouvement(position_joueur, couleur_joueur, keycode) {
 
     let msg = {
         type : "mouvementJoueur",
@@ -152,13 +149,12 @@ function majMouvement(position_joueur, keycode) {
             pseudo : localStorage.getItem("pseudo"),
             pos_x : position_joueur.x,
             pos_y : position_joueur.y,
+            couleur : couleur_joueur
         }
     }
 
-    console.log(msg);
-
     case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
-    case_.setMurJoueur();
+    case_.setPositionJoueur(couleur_joueur);
     switch(keycode) {
         case 40:
             position_joueur.y++;
@@ -181,10 +177,10 @@ function majMouvement(position_joueur, keycode) {
     msg.joueur.pos_x = position_joueur.x;
     msg.joueur.pos_y = position_joueur.y;
 
-    if (gameOver(new_case)) {
-        msg.type = "gameOver";
+    if (aPerdu(new_case)) {
+        msg.type = "perdu";
     } else {
-        addNewPosition(new_case);
+        new_case.setPositionJoueur(couleur_joueur);
     }
 
     ws.send(JSON.stringify(msg));
@@ -198,16 +194,21 @@ function ecouterJoueur() {
 function majMouvementAdverse(joueur) {
 
     case_ = grille.getCaseByCoord(joueur.position.pos_x, joueur.position.pos_y);
-    case_.setMurJoueur();
+    case_.setPositionJoueur(joueur.couleur);
 
 }
 
 //si la nouvelle case est un mur, alors c'est perdu
-function gameOver(case_) {
+function aPerdu(case_) {
     if (case_.isWall) {
         window.removeEventListener("keyup", mouvement);
         stopInterval();
         return true;
     }
     return false;
+}
+
+// Permet de gérer l'affichage lié à la fin d'une partie
+function finirPartie(pseudo) {
+    
 }
