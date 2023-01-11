@@ -128,12 +128,12 @@ function lancementPartie(salle, salle_id, connexion) {
     }
 
     let position_joueur_depart1 = {
-        x : 2,
+        x : 3,
         y : 14
     }
 
     let position_joueur_depart2 = {
-        x : position_joueur_depart1.x + 25,
+        x : position_joueur_depart1.x + 23,
         y : 14
     }
 
