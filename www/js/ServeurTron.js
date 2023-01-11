@@ -233,7 +233,11 @@ function finDePartie(joueur) {
 
     let msg = {
         type : "finDePartie",
-        pseudo : joueur.pseudo
+        pseudo : joueur.pseudo,
+        joueur : {
+            pseudo : "",
+            score : 0
+        }
     }
 
     // On met à jour les scores des autres joueurs
@@ -242,8 +246,12 @@ function finDePartie(joueur) {
 
         if (j.pseudo != joueur.pseudo) {
             j.setScore(j.getScore() + 1);
-            let pseudo_joueur = await j.majScoreJoueurBdd();
-            console.log(pseudo_joueur);
+            let joueur = await j.majScoreJoueurBdd();
+            msg.joueur.pseudo = joueur.pseudo;
+            msg.joueur.score = joueur.score;
+
+            // On enlève tous les joueurs de la salle de jeu
+            salleDuJoueur.supprimerJoueur(j);
         }
 
         j.getConnexion().send(JSON.stringify(msg));

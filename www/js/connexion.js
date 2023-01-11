@@ -48,14 +48,19 @@ ws.onmessage = function(message) {
     switch(messageJson.type) {
         // Dans le cas d'une connexion réussie
         case 'connexion' :
+            infosConnexion.style.visibility = "visible";
+            if(messageJson.statut == false) {
+                infosConnexion.innerHTML = "Vous êtes déjà connecté autre part";
+                return;
+            }
             msg = {
                 type : "attenteDunePartie",
                 pseudo : messageJson.pseudo
             }
             formulaireConnexion.style.visibility = "hidden";
-            infosConnexion.style.visibility = "visible";
 
             let p = document.createElement("p");
+            p.id = "score";
             p.innerHTML = "Vous êtes connectés en tant que " + messageJson.pseudo + "<br>Score actuel : " + messageJson.score;
             infosConnexion.append(p);
 
@@ -108,6 +113,11 @@ ws.onmessage = function(message) {
             break;
 
         case 'finDePartie':
+            // On met a jour l'affichage du score du joueur actuel
+            if (messageJson.joueur.pseudo == localStorage.getItem("pseudo")) {
+                let p = document.getElementById("score");
+                p.innerHTML = "Vous êtes connectés en tant que " + messageJson.joueur.pseudo + "<br>Score actuel : " + messageJson.joueur.score;
+            }
             finirPartie(messageJson.pseudo);
             break;
     }

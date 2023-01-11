@@ -13,7 +13,11 @@ class JoueursConnectesListe {
     }
 
     isJoueurConnecte(pseudo) {
-        return this.joueursConnectes.includes(pseudo);
+        let found = false;
+        this.joueursConnectes.forEach(j => {
+            if (j.pseudo == pseudo) found = true;
+        });
+        return found;
     }
 }
 

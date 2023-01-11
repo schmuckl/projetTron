@@ -217,5 +217,37 @@ function aPerdu(case_) {
 function finirPartie(pseudo) {
     window.removeEventListener("keyup", mouvement);
     stopInterval();
-    console.log(pseudo + "  a PERDUUUUUUUUUUUUUU");
+    
+    console.log(pseudo + " a perdu, la partie s'arrête");
+    let divJeu = document.getElementById("jeu");
+    divJeu.style.visibility = "hidden";
+    
+    let infosFileDattente = document.getElementById("infosFileDattente");
+    infosFileDattente.style.visibility = "hidden";
+    let divInfosJeu = document.getElementById("infosJeu");
+    divInfosJeu.style.visibility = "hidden";
+    
+    let infosConnexion = document.getElementById("infosConnexion");
+    let btn = document.createElement("input");
+    btn.type = "button";
+    btn.value = "Rejouer";
+    btn.onclick = function() {
+        ws.send(JSON.stringify({
+            type : "attenteDunePartie",
+            pseudo : pseudo
+        }));
+    }
+    infosConnexion.append(btn);
+}
+
+// Fonction renvoyant un msg de file d'attente afin de rejouer
+function rejouer(pseudo) {
+
+    msg = {
+        type : "attenteDunePartie",
+        pseudo : pseudo
+    }
+
+    ws.send(JSON.stringify(msg));
+
 }

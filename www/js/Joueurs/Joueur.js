@@ -45,10 +45,18 @@ module.exports = {
 
 		// Met a jour le joueur en BDD avec le score
 		async majScoreJoueurBdd() {
+			let joueur = {
+				pseudo : "",
+				score : 0
+			}
 			let doc = await JoueurBdd.findOneAndUpdate({pseudo: this.pseudo, password: this.password}, {score: this.getScore()}, {
 				new: true
 			});
-			return doc.pseudo;
+			if (doc.pseudo != null) {
+				joueur.pseudo = doc.pseudo;
+				joueur.score = doc.score;
+			}
+			return joueur;
 		}
 
 		async findJoueurBdd() {
