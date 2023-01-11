@@ -18,7 +18,7 @@ Après avoir installé MongoDB, on peut lancer la BDD via la commande (sous WebD
 - Installer mongoose si besoin (npm install mongoose)
 
 Pour lancer le serveur et l'application :
-Toujours dans le même dossier, lancer la commande "node www/js/ServerWS";
+Toujours dans le même dossier, lancer la commande "node www/js/ServerTron";
 Un serveur basique se lance dans cette invite de commande;
 Dans une autre invite de commande, lancer "cordova build browser";
 Ensuite, lancer "cordova run browser" et l'application se lance.

@@ -17,6 +17,7 @@ class Case {
         this.isWall = true;
         let td = document.getElementById(this.val);
         td.setAttribute("style", "background-color:orange");
+        td.classList.remove("currentPosition");
     }
 
     setDepart() {

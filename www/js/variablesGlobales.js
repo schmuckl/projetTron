@@ -14,7 +14,3 @@ let position_joueur_depart_2 = {
     y : 14
 }
 
-let position_joueur = {
-    x : 26,
-    y : 14
-}
