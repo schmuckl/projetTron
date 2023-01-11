@@ -188,6 +188,11 @@ function majMouvement(position_joueur, couleur_joueur, keycode) {
 
 // Ajout de l'eventListener pour les flèches directionnelles
 function ecouterJoueur() {
+    interval = setInterval(function() {
+        console.log("down");
+        majMouvement(position_joueur, couleur_joueur, 40);
+
+    }, 300);
     window.addEventListener("keyup", mouvement);
 }
 
@@ -210,5 +215,7 @@ function aPerdu(case_) {
 
 // Permet de gérer l'affichage lié à la fin d'une partie
 function finirPartie(pseudo) {
-    
+    window.removeEventListener("keyup", mouvement);
+    stopInterval();
+    console.log(pseudo + "  a PERDUUUUUUUUUUUUUU");
 }

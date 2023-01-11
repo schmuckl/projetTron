@@ -35,6 +35,22 @@ module.exports = {
 			return this.pseudo;
 		}
 
+		getScore() {
+			return this.score;
+		}
+
+		setScore(score) {
+			this.score = score;
+		}
+
+		// Met a jour le joueur en BDD avec le score
+		async majScoreJoueurBdd() {
+			let doc = await JoueurBdd.findOneAndUpdate({pseudo: this.pseudo, password: this.password}, {score: this.getScore()}, {
+				new: true
+			});
+			return doc.pseudo;
+		}
+
 		async findJoueurBdd() {
 
 			let messageJson = {

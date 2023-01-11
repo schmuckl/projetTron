@@ -38,6 +38,8 @@ ws.onmessage = function(message) {
     let infosFileDattente = document.getElementById("infosFileDattente");
     let pfileDattente = document.getElementById("fileDattente");
     let pfileNbJoueurs = document.getElementById("fileNbJoueurs");
+    let divInfosJeu = document.getElementById("infosJeu");
+    let pInfosJoueursPresents = document.getElementById("joueursPresents");
     let divJeu = document.getElementById("jeu");
     let divConnexion = document.getElementById("connexion");
 
@@ -52,8 +54,11 @@ ws.onmessage = function(message) {
             }
             formulaireConnexion.style.visibility = "hidden";
             infosConnexion.style.visibility = "visible";
-            let pPseudo = document.getElementById("infosPseudo");
-            pPseudo.innerHTML = messageJson.pseudo;
+
+            let p = document.createElement("p");
+            p.innerHTML = "Vous êtes connectés en tant que " + messageJson.pseudo + "<br>Score actuel : " + messageJson.score;
+            infosConnexion.append(p);
+
             ws.send(JSON.stringify(msg));
             break;
 
@@ -65,11 +70,22 @@ ws.onmessage = function(message) {
 
         // Maj du nombre de joueurs présents dans la queue
         case 'majNbJoueurs' :
-            pfileNbJoueurs.innerHTML = messageJson.salle.nbJoueurs + "/2";
+            if (messageJson.salle.nbJoueurs > 1) {
+                divInfosJeu.style.visibility = "visible";
+                let i = 0;
+                messageJson.salle.joueurs.forEach(j => {
+                    if (j.pseudo != localStorage.getItem("pseudo")) {
+                        if (i == 0) pInfosJoueursPresents.innerHTML += j.pseudo;
+                        else pInfosJoueursPresents.innerHTML += " - " + j.pseudo;
+                        i++;
+                    }
+                });
+            }
+            pfileNbJoueurs.innerHTML = messageJson.salle.nbJoueurs + "/" + nbMaxJoueurs;
             break;
             
+        // Quand on peut lancer la partie
         case 'lancementPartie' :
-
             messageJson.salle.joueurs.forEach(j => {
                 if (localStorage.getItem("pseudo") == j.pseudo) {
                     position_joueur = j.position;
@@ -92,7 +108,7 @@ ws.onmessage = function(message) {
             break;
 
         case 'finDePartie':
-            finirPartie(message.pseudo);
+            finirPartie(messageJson.pseudo);
             break;
     }
 }

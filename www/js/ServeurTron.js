@@ -14,6 +14,7 @@ const wsServer = new WebSocketServer({
 });
 
 let sockets = [];
+let tailleGrille = 30;
 
 wsServer.on('request', function (request) {
     const connexion = request.accept(null, request.origin);
@@ -64,7 +65,8 @@ async function connexionJoueurs(message, connexion) {
         type : "connexion",
         statut : false,
         message : "",
-        pseudo : ""
+        pseudo : "",
+        score : 0
     }
 
     let j = null;
@@ -75,7 +77,10 @@ async function connexionJoueurs(message, connexion) {
         j = new Joueur(message.pseudo, connexion, message.password, 0);
         // On regarde s'il existe
         messageJson = await j.findJoueurBdd();
-        if (messageJson.statut == true) JoueursConnectesListe.ajouterJoueur(j);
+        if (messageJson.statut == true) {
+            JoueursConnectesListe.ajouterJoueur(j);
+            messageJson.score = j.getScore();
+        }
     }
 
     messageJson.pseudo = message.pseudo;
@@ -112,7 +117,6 @@ function attenteDunePartie(joueur, connexion) {
     
     if (salleDattente.isSallePleine()) {
         eventEmitter.emit("lancementPartie", infosSalle);
-        // lancementPartie(messageJson, joueur.getConnexion());
     }
 
     connexion.send(JSON.stringify(messageJson));
@@ -129,12 +133,12 @@ function lancementPartie(salle, salle_id, connexion) {
 
     let position_joueur_depart1 = {
         x : 2,
-        y : 14
+        y : tailleGrille/2 - 1
     }
 
     let position_joueur_depart2 = {
-        x : position_joueur_depart1.x + 25,
-        y : 14
+        x : position_joueur_depart1.x + tailleGrille - 5,
+        y : tailleGrille/2 - 1
     }
 
     // Permet de gérer la position initiale des joueurs pour 2 joueurs actuellement
@@ -232,7 +236,16 @@ function finDePartie(joueur) {
         pseudo : joueur.pseudo
     }
 
-    joueursDansLaSalle.forEach(j => {
+    // On met à jour les scores des autres joueurs
+
+    joueursDansLaSalle.forEach(async j => {
+
+        if (j.pseudo != joueur.pseudo) {
+            j.setScore(j.getScore() + 1);
+            let pseudo_joueur = await j.majScoreJoueurBdd();
+            console.log(pseudo_joueur);
+        }
+
         j.getConnexion().send(JSON.stringify(msg));
     });
 }

@@ -16,16 +16,6 @@ module.exports = {
         }  
 
         getJoueurs() {
-            // Array des infos des joueurs sans la connexion
-            // let infosJoueurs = [];
-            // this.joueurs.forEach(j => {
-            //     infosJoueurs.push({
-            //         "pseudo" : j.pseudo,
-            //         "password" : j.password,
-            //         "score" : j.score
-            //     });
-            // });
-            // return infosJoueurs;
             return this.joueurs;
         }
 
