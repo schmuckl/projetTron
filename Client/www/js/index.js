@@ -120,6 +120,7 @@ ws.onmessage = function(message) {
             if (messageJson.joueur.pseudo == localStorage.getItem("pseudo")) {
                 pScore.innerHTML = "Vous êtes connectés en tant que " + messageJson.joueur.pseudo + "<br>Score actuel : " + messageJson.joueur.score;
             }
+            afficherPerdant(messageJson.pseudo);
             finirPartie(messageJson.pseudo);
             break;
 

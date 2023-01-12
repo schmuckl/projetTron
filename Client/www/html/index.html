@@ -33,6 +33,7 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="../css/modale.css">
         <link rel="stylesheet" href="../css/index.css">
         <title>Tron</title>
     </head>
@@ -70,6 +71,12 @@
 
         <!-- La div de fin de partie -->
         <div id="finDePartie" style="visibility: hidden;"></div>
+
+        <div id="modale" class="modal" style="display: none;">
+            <div class="modal-content" id="contenuModale">
+                <span class="close">&times;</span>
+            </div>
+        </div> 
 
         <script src="../../node_modules/crypto-js/crypto-js.js"></script>
         <script src="../js/variablesGlobales.js"></script>

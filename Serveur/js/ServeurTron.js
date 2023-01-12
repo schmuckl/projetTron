@@ -51,7 +51,7 @@ wsServer.on('request', function (request) {
     connexion.on('close', function (reasonCode, description) {
         
         // On enlève le joueur de la liste des joueurs connectés
-        JoueursConnectesListe.supprimerJoueur(joueur);
+        if (joueur != null) JoueursConnectesListe.supprimerJoueur(joueur);
 
         console.log("Websocket fermé - code : " + reasonCode + " - raison : " + description);
         sockets = sockets.filter(s => s !== connexion);

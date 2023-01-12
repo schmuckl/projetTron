@@ -1,6 +1,11 @@
 const ws = new WebSocket('ws://localhost:9898/');
 
 let grille = new Grille(tailleGrille);
+// Empêche au joueur d'aller dans la direction d'où il vient
+    // Correspond au keyCode de la touche précédente
+let directionPrecedente = 0;
+// init un interval pour mouvement automatique 
+let interval = 0;
 
 function init(joueurs) {
     creerGrille();
@@ -18,6 +23,7 @@ function creerGrille() {
             td.removeAttribute("style");
             c.setWall(false);
         });
+        stopInterval();
     } else {
         let valeurCase = 0;
         let cases = [];
@@ -78,16 +84,10 @@ function addNewPosition(la_case, couleur_joueur) {
     td.setAttribute("style", "background-color:" + couleur_joueur);
 }
 
-// init un interval pour mouvement automatique 
-let interval = 0;
 // supprimer un interval
 function stopInterval() {
     clearInterval(interval);
 }
-
-// Empêche au joueur d'aller dans la direction d'où il vient
-    // Correspond au keyCode de la touche précédente
-let directionPrecedente = 0;
 
 // Fonction permettant la prise en compte des actions du joueur (flèches directionnelles)
 // A chaque nouvelle position, on envoi un msg au serveur
@@ -102,9 +102,7 @@ function mouvement(event) {
             directionPrecedente = event.keyCode;
             stopInterval();
             interval = setInterval(function() {
-                console.log("down");
                 majMouvement(position_joueur, couleur_joueur, 40);
-
             }, 300);
             break;
         case 38:
@@ -114,9 +112,7 @@ function mouvement(event) {
             directionPrecedente = event.keyCode;
             stopInterval();
             interval = setInterval(function() {
-                console.log("up");
                 majMouvement(position_joueur, couleur_joueur, 38);
-                
             }, 300);
             break;
         case 37:
@@ -126,9 +122,7 @@ function mouvement(event) {
             directionPrecedente = event.keyCode;
             stopInterval();
             interval = setInterval(function() {
-                console.log("left");
                 majMouvement(position_joueur, couleur_joueur, 37);
-
             }, 300);
             break;
         case 39:
@@ -138,10 +132,7 @@ function mouvement(event) {
             directionPrecedente = event.keyCode;
             stopInterval();
             interval = setInterval(function() {
-                console.log("right");
-                
                 majMouvement(position_joueur, couleur_joueur, 39);
-
             }, 300);
             break;
     }
@@ -195,19 +186,16 @@ function majMouvement(position_joueur, couleur_joueur, keycode) {
 
 // Ajout de l'eventListener pour les flèches directionnelles
 function ecouterJoueur() {
-    interval = setInterval(function() {
-        console.log("down");
-        majMouvement(position_joueur, couleur_joueur, 40);
-
-    }, 300);
     window.addEventListener("keyup", mouvement);
+    interval = setInterval(function() {
+        majMouvement(position_joueur, couleur_joueur, 40);
+    }, 300);
+    directionPrecedente = 40;
 }
 
 function majMouvementAdverse(joueur) {
-
     case_ = grille.getCaseByCoord(joueur.position.pos_x, joueur.position.pos_y);
     case_.setPositionJoueur(joueur.couleur);
-
 }
 
 //si la nouvelle case est un mur, alors c'est perdu
@@ -245,4 +233,26 @@ function finirPartie(pseudo) {
         btn.style.visibility = "hidden";
     }
     infosConnexion.append(btn);
+}
+
+function afficherPerdant(pseudo) {
+    var modale = document.getElementById("modale");
+    var span = document.getElementsByClassName("close")[0];
+    var divContenuModale = document.getElementById("contenuModale");
+
+    let p = document.createElement("p");
+    p.innerHTML = "Le joueur " + pseudo + " a perdu la partie !";
+    divContenuModale.append(p);
+
+    modale.style.display = "block";
+
+    span.onclick = function() {
+        modale.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modale) {
+            modale.style.display = "none";
+        }
+    } 
 }
