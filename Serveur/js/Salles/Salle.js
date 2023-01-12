@@ -1,12 +1,3 @@
-const mongoose = require('mongoose');
-// mongoose.connect(urlBdd + nomBdd);
-mongoose.connect("mongodb://localhost:27017/" + "projetTron");
-
-// const SalleSchema = {};
-
-// const SalleBdd = mongoose.model('Joueur', SalleSchema);
-
-
 module.exports = {
     Salle: class {
         constructor(id = 0, joueurs = [], nbJoueurs = 0) {
