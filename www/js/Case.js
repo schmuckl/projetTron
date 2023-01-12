@@ -27,4 +27,8 @@ class Case {
     getValeur() {
         return this.val;
     }
+
+    setWall(isWall) {
+        this.isWall = isWall;
+    }
 }

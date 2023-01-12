@@ -16,6 +16,7 @@ function creerGrille() {
         grille.getCases().forEach(c => {
             let td = document.getElementById(c.getValeur());
             td.removeAttribute("style");
+            c.setWall(false);
         });
     } else {
         let valeurCase = 0;
@@ -32,8 +33,8 @@ function creerGrille() {
             }
         }
         grille.setCases(cases);
-        setPositionsMur();
     }
+    setPositionsMur();
 
     return;
 }
@@ -146,7 +147,6 @@ function mouvement(event) {
     }
 }
 
-
 function majMouvement(position_joueur, couleur_joueur, keycode) {
 
     let msg = {
@@ -162,6 +162,7 @@ function majMouvement(position_joueur, couleur_joueur, keycode) {
 
     case_ = grille.getCaseByCoord(position_joueur.x, position_joueur.y);
     case_.setPositionJoueur(couleur_joueur);
+
     switch(keycode) {
         case 40:
             position_joueur.y++;
@@ -189,7 +190,6 @@ function majMouvement(position_joueur, couleur_joueur, keycode) {
     } else {
         new_case.setPositionJoueur(couleur_joueur);
     }
-
     ws.send(JSON.stringify(msg));
 }
 

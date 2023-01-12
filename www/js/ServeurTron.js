@@ -133,12 +133,12 @@ function lancementPartie(salle, salle_id, connexion) {
 
     let position_joueur_depart1 = {
         x : 2,
-        y : tailleGrille/2 - 1
+        y : tailleGrille/2 - 11
     }
 
     let position_joueur_depart2 = {
         x : position_joueur_depart1.x + tailleGrille - 5,
-        y : tailleGrille/2 - 1
+        y : tailleGrille/2 - 11
     }
 
     // Permet de gérer la position initiale des joueurs pour 2 joueurs actuellement
