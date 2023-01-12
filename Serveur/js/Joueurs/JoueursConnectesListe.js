@@ -5,18 +5,17 @@ class JoueursConnectesListe {
     }
 
     ajouterJoueur(joueur) {
-        this.joueursConnectes.push(joueur);
+        this.joueursConnectes[joueur.getPseudo()] = {joueur};
     }
 
     supprimerJoueur(joueur) {
-        let index = this.joueursConnectes.indexOf(joueur);
-        delete this.joueursConnectes.splice(index, 1);
+        this.joueursConnectes.splice(joueur.getPseudo(), 1);
     }
 
     isJoueurConnecte(pseudo) {
         let found = false;
-        this.joueursConnectes.forEach(j => {
-            if (j.pseudo == pseudo) found = true;
+        Object.entries(this.joueursConnectes).forEach(([key, value]) => {
+            if (value.joueur.getPseudo() == pseudo) found = true;
         });
         return found;
     }

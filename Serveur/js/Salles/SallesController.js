@@ -44,12 +44,10 @@ class SallesController {
     getSalleByJoueurPseudo(pseudo) {
         let salle = null;
         this.salles.forEach(s => {
-            s.getJoueurs().forEach(j => {
-                if (j.getPseudo() == pseudo) {
-                    salle = s;
-                    return;
-                }
-            });
+            if (s.joueurs[pseudo] != null) {
+                salle = s;
+                return;
+            }
         });
         return salle;
     }

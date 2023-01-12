@@ -29,7 +29,6 @@ ws.onmessage = function(message) {
     let msg;
 
     // Pour tous les affichages aux clients
-    let formulaireConnexion = document.getElementById("formulaireConnexion");
     let infosConnexion = document.getElementById("infosConnexion");
     let infosFileDattente = document.getElementById("infosFileDattente");
     let pfileDattente = document.getElementById("fileDattente");
@@ -38,6 +37,8 @@ ws.onmessage = function(message) {
     let pInfosJoueursPresents = document.getElementById("joueursPresents");
     let divJeu = document.getElementById("jeu");
     let divConnexion = document.getElementById("connexion");
+    let btnDeconnexion = document.getElementById("btnDeconnexion");
+    let pScore = document.getElementById("score");
 
     console.log(messageJson);
 
@@ -53,12 +54,17 @@ ws.onmessage = function(message) {
                 type : "attenteDunePartie",
                 pseudo : messageJson.pseudo
             }
-            formulaireConnexion.style.visibility = "hidden";
+            divConnexion.style.visibility = "hidden";
+            btnDeconnexion.style.visibility = "visible";
 
-            let p = document.createElement("p");
-            p.id = "score";
-            p.innerHTML = "Vous êtes connectés en tant que " + messageJson.pseudo + "<br>Score actuel : " + messageJson.score;
-            infosConnexion.append(p);
+            pScore.innerHTML = "Vous êtes connectés en tant que " + messageJson.pseudo + "<br>Score actuel : " + messageJson.score;
+
+            btnDeconnexion.onclick = function() {
+                ws.send(JSON.stringify({
+                    type : "deconnexion",
+                    pseudo : pseudo
+                }));
+            }
 
             ws.send(JSON.stringify(msg));
             break;
@@ -105,16 +111,23 @@ ws.onmessage = function(message) {
             break;
 
         case 'mouvementAdverse':
+            console.log(messageJson);
             majMouvementAdverse(messageJson.salle.joueur);
             break;
 
         case 'finDePartie':
             // On met a jour l'affichage du score du joueur actuel
             if (messageJson.joueur.pseudo == localStorage.getItem("pseudo")) {
-                let p = document.getElementById("score");
-                p.innerHTML = "Vous êtes connectés en tant que " + messageJson.joueur.pseudo + "<br>Score actuel : " + messageJson.joueur.score;
+                pScore.innerHTML = "Vous êtes connectés en tant que " + messageJson.joueur.pseudo + "<br>Score actuel : " + messageJson.joueur.score;
             }
             finirPartie(messageJson.pseudo);
+            break;
+
+        case 'estDeconnecte':
+            btnDeconnexion.style.visibility = "hidden";
+            divConnexion.style.visibility = "visible";
+            infosFileDattente.style.visibility = "hidden";
+            infosConnexion.style.visibility = "hidden";
             break;
     }
 }

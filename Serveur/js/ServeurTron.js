@@ -41,6 +41,9 @@ wsServer.on('request', function (request) {
 
         } else if (message.type == "perdu") {
             finDePartie(joueur);
+
+        } else if (message.type == "deconnexion") {
+            deconnexion(joueur);
         }
     });
 
@@ -86,6 +89,23 @@ async function connexionJoueurs(message, connexion) {
     messageJson.pseudo = message.pseudo;
     connexion.send(JSON.stringify(messageJson));
     return j;
+}
+
+// Permet de gérer la déconnexion d'un joueur
+function deconnexion(joueur) {
+    
+    let msg = {
+        type : "estDeconnecte"
+    }
+
+    let salle = SallesController.getSalleByJoueurPseudo(joueur.pseudo);
+
+    if (salle != null) {
+        salle.supprimerJoueur(joueur);
+    }
+    JoueursConnectesListe.supprimerJoueur(joueur);
+
+    joueur.getConnexion().send(JSON.stringify(msg));
 }
 
 // Gère le lancement d'une file d'attente
@@ -142,8 +162,8 @@ function lancementPartie(salle, salle_id, connexion) {
     }
 
     // Permet de gérer la position initiale des joueurs pour 2 joueurs actuellement
-    for (let i = 0; i < salle.nbJoueurs; i++) {
-        const j = salle.joueurs[i];
+    let i = 0;
+    salle.joueurs.forEach(j => {
         if (i == 0) {
             j.position = {
                 x : position_joueur_depart1.x,
@@ -156,7 +176,8 @@ function lancementPartie(salle, salle_id, connexion) {
             }
         }
         j.couleur = couleursJoueurs[i];
-    }
+        i++;
+    });
 
     let msg = {
         type : "lancementPartie",
@@ -218,10 +239,9 @@ function mouvementJoueur(joueur, message) {
         }
     }
 
-    joueursDansLaSalle.forEach(j => {
-        if (j.getPseudo() != joueur.getPseudo()) j.getConnexion().send(JSON.stringify(msg));
+    Object.entries(joueursDansLaSalle).forEach(([key, value]) => {
+        if (value.joueur.getPseudo() != joueur.getPseudo()) value.joueur.getConnexion().send(JSON.stringify(msg));
     });
-
 }
 
 // Permet de gérer la fin de la partie
@@ -241,19 +261,14 @@ function finDePartie(joueur) {
     }
 
     // On met à jour les scores des autres joueurs
-
-    joueursDansLaSalle.forEach(async j => {
-
-        if (j.pseudo != joueur.pseudo) {
-            j.setScore(j.getScore() + 1);
-            let joueur = await j.majScoreJoueurBdd();
+    Object.entries(joueursDansLaSalle).forEach(async ([key, value]) => {
+        if (value.joueur.getPseudo() != joueur.getPseudo()) {
+            value.joueur.setScore(value.joueur.getScore() + 1);
+            let j = await value.joueur.majScoreJoueurBdd();
             msg.joueur.pseudo = joueur.pseudo;
             msg.joueur.score = joueur.score;
         }
-
-        // On enlève tous les joueurs de la salle de jeu
-        salleDuJoueur.supprimerJoueur(j);
-
-        j.getConnexion().send(JSON.stringify(msg));
+        salleDuJoueur.supprimerJoueur(value.joueur);
+        value.joueur.getConnexion().send(JSON.stringify(msg));
     });
 }

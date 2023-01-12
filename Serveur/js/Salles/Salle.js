@@ -13,13 +13,13 @@ module.exports = {
         getInfosJoueurs() {
             // Array des infos des joueurs sans la connexion
             let infosJoueurs = [];
-            this.joueurs.forEach(j => {
+            Object.entries(this.joueurs).forEach(([key, value]) => {
                 infosJoueurs.push({
-                    "pseudo" : j.pseudo,
-                    "password" : j.password,
-                    "score" : j.score
+                    "pseudo" : value.joueur.getPseudo(),
+                    "score" : value.joueur.getScore()
                 });
             });
+
             return infosJoueurs;
         }
 
@@ -37,14 +37,13 @@ module.exports = {
         
         ajouterJoueur(joueur) {
             if (this.nbJoueurs < 2) {
-                this.joueurs.push(joueur);
+                this.joueurs[joueur.getPseudo()] = {joueur};
                 this.nbJoueurs++;
             }
         }
 
         supprimerJoueur(joueur) {
-            let index = this.joueurs.indexOf(joueur);
-            delete this.joueurs.splice(index, 1);
+            this.joueurs.splice(joueur.getPseudo(), 1);
             this.nbJoueurs--;
         }
 

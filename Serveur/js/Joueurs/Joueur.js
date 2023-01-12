@@ -39,6 +39,10 @@ module.exports = {
 			return this.score;
 		}
 
+		getPassword() {
+			return this.password;
+		}
+
 		setScore(score) {
 			this.score = score;
 		}
