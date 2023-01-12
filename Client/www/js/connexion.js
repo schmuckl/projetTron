@@ -1,7 +1,7 @@
 
 function connexion() {
     let pseudo = document.getElementById("pseudo").value;
-    let mdp = document.getElementById("password").value;
+    let mdp = (CryptoJS.SHA3(document.getElementById("password").value)).toString();
 
     let msg = null;
 
