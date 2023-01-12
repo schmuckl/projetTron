@@ -1,4 +1,12 @@
-/platforms
-/BDD
-/node_modules
-package-lock.json
+
+# Client
+/Client/node_modules
+/Client/platforms
+/Client/package-lock.json
+
+# Serveur
+/Serveur/node_modules
+/Serveur/package-lock.json
+
+# BDD
+/Serveur/gestionBdd/BDD

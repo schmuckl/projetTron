@@ -33,14 +33,45 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
-        <link rel="stylesheet" href="css/index.css">
-        <title>Hello World</title>
+        <link rel="stylesheet" href="../css/index.css">
+        <title>Connexion</title>
     </head>
     <body>
+        <div id="connexion">
+            <div name="formulaireConnexion" id="formulaireConnexion">
+                <input type="text" id="pseudo" placeholder="Pseudo"/>
+                <input type="password" id="password" placeholder="Mon mot de passe"/>
+                <button onclick="connexion()">Me connecter</button>
+            </div>
+
+            <div id="infosConnexion" style="visibility: hidden;"></div>
+            <br>
+            <div id="infosFileDattente" style="visibility: hidden;">
+                <p id="fileDattente">Pas encore dans une file d'attente...</p><p id="fileNbJoueurs"></p>
+            </div>
+
+            <div id="infosJeu" style="visibility: hidden;">
+                <p>Vous êtes dans la salle avec :</p>
+                <p id="joueursPresents"></p>
+
+                <input type="button" id="rejouer" style="visibility: hidden;" value="Rejouer" >
+            </div>
+        </div>
+
+        <!-- La div qui contient tout le jeu -->
+        <div id="jeu" style="visibility: hidden;">
+            <table id="grille">
+                <tr></tr>
+            </table>
+        </div>
+
+        <!-- La div de fin de partie -->
+        <div id="finDePartie" style="visibility: hidden;"></div>
         
-        <button onclick="toJeu()">To Tron</button>
-        <script src="js/variablesGlobales.js"></script>
-        <script src="js/connexion.js"></script>
-        <script src="js/tron.js"></script>
+        <script src="../js/variablesGlobales.js"></script>
+        <script src="../js/Case.js"></script>
+        <script src="../js/Grille.js"></script>
+        <script src="../js/tron.js"></script>
+        <script src="../js/connexion.js"></script>
     </body>
 </html>
