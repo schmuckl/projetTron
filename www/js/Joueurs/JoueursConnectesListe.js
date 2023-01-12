@@ -9,7 +9,8 @@ class JoueursConnectesListe {
     }
 
     supprimerJoueur(joueur) {
-        delete this.joueursConnectes[joueur];
+        let index = this.joueursConnectes.indexOf(joueur);
+        delete this.joueursConnectes.splice(index, 1);
     }
 
     isJoueurConnecte(pseudo) {

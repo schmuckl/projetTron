@@ -53,6 +53,8 @@
             <div id="infosJeu" style="visibility: hidden;">
                 <p>Vous êtes dans la salle avec :</p>
                 <p id="joueursPresents"></p>
+
+                <input type="button" id="rejouer" style="visibility: hidden;" value="Rejouer" >
             </div>
         </div>
 
@@ -64,16 +66,8 @@
         </div>
 
         <!-- La div de fin de partie -->
-        <div id="finDePartie" style="visibility: hidden;">
-            
-            <button onclick="rejouer()" id="rejouer">Rejouer</button>
-        </div>
-
-        <script>
-            function toTron() {
-                window.location.href = "tron.html";
-            }
-        </script>
+        <div id="finDePartie" style="visibility: hidden;"></div>
+        
         <script src="js/variablesGlobales.js"></script>
         <script src="js/Case.js"></script>
         <script src="js/Grille.js"></script>

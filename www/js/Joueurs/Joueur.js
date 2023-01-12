@@ -65,7 +65,8 @@ module.exports = {
 				type : "connexion",
 				statut : false,
 				message : "",
-				pseudo : ""
+				pseudo : "",
+				score : 0
 			}
 
 			 // Retourne une promesse qui sera résolue on aura trouvé ou non le joueur
@@ -79,6 +80,7 @@ module.exports = {
 					if (joueur != null) {
 						messageJson.message = "Connexion OK";
 						messageJson.statut = true;
+						messageJson.score = joueur.score;
 					} else {
 						await new Promise((resolveCreation) => {
 							const nouveauJoueur = new JoueurBdd({pseudo : this.pseudo, password: this.password, score: this.score});

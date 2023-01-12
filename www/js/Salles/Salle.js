@@ -49,11 +49,11 @@ module.exports = {
                 this.joueurs.push(joueur);
                 this.nbJoueurs++;
             }
-            //else ON NE PEUT PAS AJOUTER UN JOUEUR DE PLUS
         }
 
         supprimerJoueur(joueur) {
-            delete this.joueurs[joueur]; 
+            let index = this.joueurs.indexOf(joueur);
+            delete this.joueurs.splice(index, 1);
             this.nbJoueurs--;
         }
 
@@ -64,18 +64,5 @@ module.exports = {
         getId() {
             return this.id;
         }
-
-        // Un joueur dans une salle a forcément une position
-        // getPositionsJoueurs() {
-        //     let positions = [];
-        //     this.joueurs.forEach(j => {
-        //         positions.push({
-        //             pseudo : j.getPseudo(),
-        //             position : {
-        //                 x : 
-        //             }
-        //         })
-        //     });
-        // }
     }
 }

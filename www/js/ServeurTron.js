@@ -44,15 +44,18 @@ wsServer.on('request', function (request) {
         }
     });
 
-    // Quand la websocket se ferme, l'utilisateur ferme son onglet ou navigateur ou par un timer qu'on a mis (pas notre cas ici)
+    // Quand la connexion se ferme
     connexion.on('close', function (reasonCode, description) {
-        // on affiche dans la console du serveur que la websocket est fermé 
-        console.log(reasonCode + ". Tu as fermé la websocket : " + description);
+        
+        // On enlève le joueur de la liste des joueurs connectés
+        JoueursConnectesListe.supprimerJoueur(joueur);
+
+        console.log("Websocket fermé - code : " + reasonCode + " - raison : " + description);
         sockets = sockets.filter(s => s !== connexion);
     });
 
     connexion.on('error', function () {
-        console.log("Some Error occurred");
+        console.log("Une erreur est survenue");
     });
 
 });
@@ -64,9 +67,7 @@ async function connexionJoueurs(message, connexion) {
     let messageJson = {
         type : "connexion",
         statut : false,
-        message : "",
-        pseudo : "",
-        score : 0
+        message : ""
     }
 
     let j = null;
@@ -74,15 +75,14 @@ async function connexionJoueurs(message, connexion) {
     if (JoueursConnectesListe.isJoueurConnecte(message.pseudo) == true) {
         messageJson.message = "Vous êtes déjà connecté autre part.";
     } else {
-        j = new Joueur(message.pseudo, connexion, message.password, 0);
+        j = new Joueur(message.pseudo, connexion, message.password);
         // On regarde s'il existe
         messageJson = await j.findJoueurBdd();
         if (messageJson.statut == true) {
             JoueursConnectesListe.ajouterJoueur(j);
-            messageJson.score = j.getScore();
+            j.setScore(messageJson.score);
         }
     }
-
     messageJson.pseudo = message.pseudo;
     connexion.send(JSON.stringify(messageJson));
     return j;
@@ -249,10 +249,10 @@ function finDePartie(joueur) {
             let joueur = await j.majScoreJoueurBdd();
             msg.joueur.pseudo = joueur.pseudo;
             msg.joueur.score = joueur.score;
-
-            // On enlève tous les joueurs de la salle de jeu
-            salleDuJoueur.supprimerJoueur(j);
         }
+
+        // On enlève tous les joueurs de la salle de jeu
+        salleDuJoueur.supprimerJoueur(j);
 
         j.getConnexion().send(JSON.stringify(msg));
     });

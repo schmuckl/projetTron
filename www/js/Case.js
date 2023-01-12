@@ -23,4 +23,8 @@ class Case {
         let td = document.getElementById(this.val);
         td.style.backgroundColor = couleur;
     }
+
+    getValeur() {
+        return this.val;
+    }
 }

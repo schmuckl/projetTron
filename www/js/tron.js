@@ -4,28 +4,37 @@ let grille = new Grille(tailleGrille);
 
 function init(joueurs) {
     creerGrille();
-    setPositionsMur();
     setPositionsDepart(joueurs);
     ecouterJoueur();
 }
 
 // On créer la grille de jeu
 function creerGrille() {
-    
-    let valeurCase = 0;
-    let cases = [];
 
-    for(let i = 0; i < tailleGrille; i++) {
-        document.getElementById("grille").appendChild(document.createElement("tr"));
+    // Dans le cas où les joueurs demandent à rejouer, la grille est déjà créée
+    if (grille.getCases() != null) {
+        grille.getCases().forEach(c => {
+            let td = document.getElementById(c.getValeur());
+            td.removeAttribute("style");
+        });
+    } else {
+        let valeurCase = 0;
+        let cases = [];
 
-        for(let j = 0; j < tailleGrille; j++) {
-            let case_ = new Case(valeurCase, i, j);
-            case_.creerCase(valeurCase);
-            cases.push(case_);
-            valeurCase++;
+        for(let i = 0; i < tailleGrille; i++) {
+            document.getElementById("grille").appendChild(document.createElement("tr"));
+
+            for(let j = 0; j < tailleGrille; j++) {
+                let case_ = new Case(valeurCase, i, j);
+                case_.creerCase(valeurCase);
+                cases.push(case_);
+                valeurCase++;
+            }
         }
+        grille.setCases(cases);
+        setPositionsMur();
     }
-    grille.setCases(cases);
+
     return;
 }
 
@@ -35,8 +44,6 @@ function setPositionsDepart(joueurs) {
         const case_ = grille.getCaseByCoord(j.position.x, j.position.y);
         case_.setDepart(j.couleur);
     });
-
-    console.log(grille.cases);
 }
 
 // Ajoute les murs sur les bords de la grille
@@ -228,26 +235,14 @@ function finirPartie(pseudo) {
     divInfosJeu.style.visibility = "hidden";
     
     let infosConnexion = document.getElementById("infosConnexion");
-    let btn = document.createElement("input");
-    btn.type = "button";
-    btn.value = "Rejouer";
+    let btn = document.getElementById("rejouer");
+    btn.style.visibility = "visible";
     btn.onclick = function() {
         ws.send(JSON.stringify({
             type : "attenteDunePartie",
             pseudo : pseudo
         }));
+        btn.style.visibility = "hidden";
     }
     infosConnexion.append(btn);
-}
-
-// Fonction renvoyant un msg de file d'attente afin de rejouer
-function rejouer(pseudo) {
-
-    msg = {
-        type : "attenteDunePartie",
-        pseudo : pseudo
-    }
-
-    ws.send(JSON.stringify(msg));
-
 }

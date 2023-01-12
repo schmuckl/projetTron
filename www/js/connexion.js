@@ -22,10 +22,6 @@ function connexion() {
     ws.send(JSON.stringify(msg));
 }
 
-function rejouer() {
-
-}
-
 ws.onmessage = function(message) {
 
     messageJson = JSON.parse(message.data);
