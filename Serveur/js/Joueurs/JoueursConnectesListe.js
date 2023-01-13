@@ -9,7 +9,7 @@ class JoueursConnectesListe {
     }
 
     supprimerJoueur(joueur) {
-        this.joueursConnectes.splice(joueur.getPseudo(), 1);
+        delete this.joueursConnectes[joueur.getPseudo()];
     }
 
     isJoueurConnecte(pseudo) {
