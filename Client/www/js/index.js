@@ -5,8 +5,8 @@ function connexion() {
 
     let msg = null;
 
-    console.log(pseudo);
-    console.log(mdp);
+    // console.log(pseudo);
+    // console.log(mdp);
 
     if (pseudo != null && mdp != null) {
         msg = {
@@ -40,7 +40,7 @@ ws.onmessage = function(message) {
     let btnDeconnexion = document.getElementById("btnDeconnexion");
     let pScore = document.getElementById("score");
 
-    console.log(messageJson);
+    // console.log(messageJson);
 
     switch(messageJson.type) {
         // Dans le cas d'une connexion réussie
@@ -111,7 +111,6 @@ ws.onmessage = function(message) {
             break;
 
         case 'mouvementAdverse':
-            console.log(messageJson);
             majMouvementAdverse(messageJson.salle.joueur);
             break;
 

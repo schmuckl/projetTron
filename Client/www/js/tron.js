@@ -213,7 +213,7 @@ function finirPartie(pseudo) {
     window.removeEventListener("keyup", mouvement);
     stopInterval();
     
-    console.log(pseudo + " a perdu, la partie s'arrête");
+    // console.log(pseudo + " a perdu, la partie s'arrête");
     let divJeu = document.getElementById("jeu");
     divJeu.style.visibility = "hidden";
     
