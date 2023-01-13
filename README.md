@@ -10,8 +10,10 @@ Installation :
     - cordova platform add android
 
 Initialisation :
+- Lancer l'environnement "WebDev" via la commande "./LaunchCordova.bat[sh]" ou "conda activate WebDev"
+- Créer un dossier BDD sous Serveur/gestionBdd
 - Lancer la commande : 
-    - mongod --dbpath="{pathToBdd}"
+    - mongod --dbpath="Serveur/gestionBdd/BDD"
 - Pour créer la collection joueurs, lancer la commande :
     - node Serveur/gestionBdd/initDataBdd.js
 
